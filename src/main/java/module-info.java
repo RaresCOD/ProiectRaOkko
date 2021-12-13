@@ -9,4 +9,8 @@ module ro.ubbcluj.map.proiectraokko4 {
 
     opens ro.ubbcluj.map.proiectraokko4 to javafx.fxml;
     exports ro.ubbcluj.map.proiectraokko4;
+
+    opens ro.ubbcluj.map.proiectraokko4.domain to javafx.base;
+    exports ro.ubbcluj.map.proiectraokko4.controller;
+
 }

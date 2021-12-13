@@ -30,18 +30,19 @@ import java.io.IOException;
 
 public class HelloApplication extends Application {
 
-
+    UtilizatorService service;
 
     @Override
     public void start(Stage primaryStage) throws IOException {
         Repository<Long, Utilizator> repoDb = new UtilizatorDbRepository("jdbc:postgresql://localhost:5432/Tema1", "postgres", "kokonel1002", new UtilizatorValidator());
         Repository<Tuple<Long, Long>, Prietenie> repoFDb = new FriendshipDbRepository("jdbc:postgresql://localhost:5432/Tema1", "postgres", "kokonel1002", new FriendshipValidator());
         Repository<Long, Message> repoMsgDb = new MessageDbRepository("jdbc:postgresql://localhost:5432/Tema1", "postgres", "kokonel1002", new MessageValidator());
-        UtilizatorService service = new UtilizatorService(repoDb, repoFDb, repoMsgDb);
+        service = new UtilizatorService(repoDb, repoFDb, repoMsgDb);
 
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("views/login.fxml"));
         GridPane rootLayout = (GridPane)fxmlLoader.load();
         LoginController loginController = fxmlLoader.getController();
+        loginController.setService(service);
         Scene scene = new Scene(rootLayout, 320, 240);
         primaryStage.setTitle("Log in!");
         primaryStage.setScene(scene);
