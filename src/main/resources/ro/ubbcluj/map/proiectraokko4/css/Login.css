@@ -5,6 +5,7 @@
     fx-display: inline-block;
     -fx-font-weight: 400;
     -fx-line-height: 1.5;
+    -fx-text-fill: #ffffff;
     -fx-text-alignment: center;
     -fx-vertical-align: middle;
 
