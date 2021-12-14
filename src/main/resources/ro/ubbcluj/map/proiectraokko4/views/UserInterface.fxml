@@ -59,11 +59,11 @@
                             <children>
                         <Button mnemonicParsing="false" onAction="#handleAcceptFriendRequest" styleClass="btn-primary" text="Accept" textFill="WHITE" />
                                 <Button mnemonicParsing="false" onAction="#handleAddFriend" styleClass="btn-primary" text="Add" />
-                        <Button mnemonicParsing="false">
+                        <Button mnemonicParsing="false" onAction="#handleRefreshTableViews">
                            <graphic>
                               <ImageView fitHeight="40.0" fitWidth="42.0">
                                  <image>
-                                    <Image url="@../images/Search--v2.png" />
+                                    <Image url="@../images/refresh.png" />
                                  </image>
                               </ImageView>
                            </graphic>

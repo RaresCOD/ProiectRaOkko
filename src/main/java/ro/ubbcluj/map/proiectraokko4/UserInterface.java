@@ -43,10 +43,10 @@ public class UserInterface {
 
         this.service = service;
         this.userId = userId;
-        initModel();
+        refreshModels();
     }
 
-    private void initModel() {
+    private void refreshModels() {
         List<Tuple<Utilizator, Date>> friends = service.getFriends(userId);
         List<Utilizator> fList = friends.stream()
                 .map(x -> x.getLeft())
@@ -128,5 +128,9 @@ public class UserInterface {
         } else {
             MessageAlert.showErrorMessage(null,"Nicio cerere de prietenie selectata");
         }
+    }
+
+    public void handleRefreshTableViews(ActionEvent actionEvent) {
+        refreshModels();
     }
 }
