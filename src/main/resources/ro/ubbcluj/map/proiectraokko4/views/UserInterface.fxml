@@ -5,6 +5,8 @@
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 
@@ -39,9 +41,18 @@
                 </AnchorPane>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="171.0" prefWidth="665.0">
                     <children>
-                        <HBox prefHeight="34.0" prefWidth="655.0" spacing="20.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="0.0">
+                        <HBox alignment="CENTER" prefHeight="34.0" prefWidth="655.0" spacing="20.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="0.0">
                             <children>
                                 <Button mnemonicParsing="false" onAction="#handleAddFriend" text="Add" />
+                        <Button mnemonicParsing="false">
+                           <graphic>
+                              <ImageView fitHeight="40.0" fitWidth="42.0">
+                                 <image>
+                                    <Image url="@../images/Search--v2.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
                                 <Button mnemonicParsing="false" onAction="#handleDeleteFriend" text="Delete" />
                             </children>
                             <padding>
