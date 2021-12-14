@@ -24,6 +24,7 @@ public class UserInterface {
     Long userId;
     ObservableList<Utilizator> model = FXCollections.observableArrayList();
     ObservableList<Utilizator> modelUsers = FXCollections.observableArrayList();
+    ObservableList<Utilizator> modelUsersFriendRequests = FXCollections.observableArrayList();
 
     @FXML
     TableView<Utilizator> tableView;
@@ -33,6 +34,10 @@ public class UserInterface {
     TableColumn<Utilizator,String> tableColumnFriend;
     @FXML
     TableColumn<Utilizator,String> tableColumnUser;
+    @FXML
+    TableView<Utilizator> tableViewFriendRequests;
+    @FXML
+    TableColumn<Utilizator,String> tableColumnFriendRequests;
 
     public void setService(UtilizatorService service, Long userId) {
 
@@ -52,6 +57,12 @@ public class UserInterface {
         List<Utilizator> uList = StreamSupport.stream(users.spliterator(), false)
                 .collect(Collectors.toList());
         modelUsers.setAll(uList);
+        List<Tuple<Utilizator, Date>> friendRequests = service.getFriendRequests(userId);
+        List<Utilizator> frList = friendRequests.stream()
+                .map(x -> x.getLeft())
+                .collect(Collectors.toList());
+        System.out.println(frList);
+        modelUsersFriendRequests.setAll(frList);
     }
 
     public void initialize() {
@@ -59,6 +70,8 @@ public class UserInterface {
         tableView.setItems(model);
         tableColumnUser.setCellValueFactory(new PropertyValueFactory<Utilizator, String>("username"));
         tableViewUsers.setItems(modelUsers);
+        tableColumnFriendRequests.setCellValueFactory(new PropertyValueFactory<Utilizator, String>("username"));
+        tableViewFriendRequests.setItems(modelUsersFriendRequests);
     }
 
 
@@ -86,6 +99,34 @@ public class UserInterface {
             }
         } else {
             MessageAlert.showErrorMessage(null,"Niciun utilizator selectat");
+        }
+    }
+
+    public void handleAcceptFriendRequest(ActionEvent actionEvent) {
+        Utilizator selectedUser = tableViewFriendRequests.getSelectionModel().getSelectedItem();
+        if(selectedUser != null) {
+            try{
+                service.answerFriendRequest(userId, selectedUser.getId(), 2);
+                tableViewFriendRequests.getItems().removeAll(tableViewFriendRequests.getSelectionModel().getSelectedItem());
+            } catch (ValidationException e) {
+                MessageAlert.showErrorMessage(null,e.getMessage());
+            }
+        } else {
+            MessageAlert.showErrorMessage(null,"Nicio cerere de prietenie selectata");
+        }
+    }
+
+    public void handleRejectFriendRequest(ActionEvent actionEvent) {
+        Utilizator selectedUser = tableViewFriendRequests.getSelectionModel().getSelectedItem();
+        if(selectedUser != null) {
+            try{
+                service.answerFriendRequest(userId, selectedUser.getId(), 3);
+                tableViewFriendRequests.getItems().removeAll(tableViewFriendRequests.getSelectionModel().getSelectedItem());
+            } catch (ValidationException e) {
+                MessageAlert.showErrorMessage(null,e.getMessage());
+            }
+        } else {
+            MessageAlert.showErrorMessage(null,"Nicio cerere de prietenie selectata");
         }
     }
 }
