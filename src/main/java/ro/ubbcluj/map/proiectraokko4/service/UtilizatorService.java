@@ -132,6 +132,9 @@ public class UtilizatorService {
         Prietenie prietenie = new Prietenie();
         Tuple<Long, Long> tuple = new Tuple(id1, id2);
 
+        if(id1 == id2){
+            throw new ValidationException("Nu-ti poti trimite o cerere de prietenie singur!");
+        }
         if (repo.findOne(id1) == null) {
             throw new ValidationException("User inexistent!");
         }
@@ -176,9 +179,7 @@ public class UtilizatorService {
     public List<Tuple<Utilizator, Date>> getFriendRequests(Long id) {
         List<Tuple<Utilizator, Date>> rez = repoFriend.findAll().stream()
                 .filter(x -> {
-                    if (x.getId().getLeft() == id && x.getStatus() == 1) {
-                        return true;
-                    } else if (x.getId().getRight() == id && x.getStatus() == 1) {
+                    if (x.getId().getRight() == id && x.getStatus() == 1) {
                         return true;
                     } else return false;
                 })

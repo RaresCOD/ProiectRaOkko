@@ -40,9 +40,9 @@
                                           </TableView>
                                        </children>
                                     </HBox>
-                                    <TableView prefHeight="90.0" prefWidth="200.0">
+                                    <TableView fx:id="tableViewFriendRequests" prefHeight="90.0" prefWidth="200.0">
                                       <columns>
-                                        <TableColumn prefWidth="75.0" text="C1" />
+                                        <TableColumn fx:id="tableColumnFriendRequests" prefWidth="75.0" text="Friend Requests" />
                                       </columns>
                                     </TableView>
                                  </children>
@@ -57,19 +57,19 @@
                     <children>
                         <HBox alignment="CENTER" prefHeight="34.0" prefWidth="655.0" spacing="20.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="0.0">
                             <children>
-                        <Button mnemonicParsing="false" styleClass="btn-primary" text="Accept" textFill="WHITE" />
+                        <Button mnemonicParsing="false" onAction="#handleAcceptFriendRequest" styleClass="btn-primary" text="Accept" textFill="WHITE" />
                                 <Button mnemonicParsing="false" onAction="#handleAddFriend" styleClass="btn-primary" text="Add" />
-                        <Button mnemonicParsing="false">
+                        <Button mnemonicParsing="false" onAction="#handleRefreshTableViews">
                            <graphic>
                               <ImageView fitHeight="40.0" fitWidth="42.0">
                                  <image>
-                                    <Image url="@../images/Search--v2.png" />
+                                    <Image url="@../images/refresh.png" />
                                  </image>
                               </ImageView>
                            </graphic>
                         </Button>
                                 <Button mnemonicParsing="false" onAction="#handleDeleteFriend" styleClass="btn-primary" text="Delete" />
-                        <Button mnemonicParsing="false" styleClass="btn-primary" text="Decline" />
+                        <Button mnemonicParsing="false" onAction="#handleRejectFriendRequest" styleClass="btn-primary" text="Reject" />
                             </children>
                             <padding>
                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
