@@ -1,0 +1,19 @@
+.btn-primary {
+    -fx-color: #fff;
+    -fx-background-color: #0d6efd;
+    -fx-border-color: #0d6efd;
+    fx-display: inline-block;
+    -fx-font-weight: 400;
+    -fx-line-height: 1.5;
+    -fx-color: #212529;
+    -fx-text-alignment: center;
+    -fx-vertical-align: middle;
+
+}
+
+.search-bg {
+    -fx-background-image: url("../images/Search--v2.png");
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: 500 500;
+    -fx-background-position: center center;
+}
