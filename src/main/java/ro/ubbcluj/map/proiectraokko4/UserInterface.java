@@ -1,5 +1,7 @@
 package ro.ubbcluj.map.proiectraokko4;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -8,6 +10,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import ro.ubbcluj.map.proiectraokko4.controller.MessageAlert;
+import ro.ubbcluj.map.proiectraokko4.domain.Prietenie;
 import ro.ubbcluj.map.proiectraokko4.domain.Tuple;
 import ro.ubbcluj.map.proiectraokko4.domain.Utilizator;
 import ro.ubbcluj.map.proiectraokko4.domain.validators.ValidationException;
@@ -24,7 +27,9 @@ public class UserInterface {
     Long userId;
     ObservableList<Utilizator> model = FXCollections.observableArrayList();
     ObservableList<Utilizator> modelUsers = FXCollections.observableArrayList();
-    ObservableList<Utilizator> modelUsersFriendRequests = FXCollections.observableArrayList();
+    ObservableList<Tuple<Utilizator, Prietenie>> modelUsersFriendRequests = FXCollections.observableArrayList();
+    ObservableList<Date> modelUsersFriendRequestsDate = FXCollections.observableArrayList();
+    ObservableList<String> modelUsersFriendRequestsStatus = FXCollections.observableArrayList();
 
     @FXML
     TableView<Utilizator> tableView;
@@ -35,9 +40,13 @@ public class UserInterface {
     @FXML
     TableColumn<Utilizator,String> tableColumnUser;
     @FXML
-    TableView<Utilizator> tableViewFriendRequests;
+    TableView<Tuple<Utilizator, Prietenie>> tableViewFriendRequests;
     @FXML
-    TableColumn<Utilizator,String> tableColumnFriendRequests;
+    TableColumn<Tuple<Utilizator, Prietenie>, String> tableColumnFriendRequestsUsername;
+    @FXML
+    TableColumn<Tuple<Utilizator, Prietenie>, String> tableColumnFriendRequestsDate;
+    @FXML
+    TableColumn<Tuple<Utilizator, Prietenie>, String> tableColumnFriendRequestsStatus;
 
     public void setService(UtilizatorService service, Long userId) {
 
@@ -57,12 +66,8 @@ public class UserInterface {
         List<Utilizator> uList = StreamSupport.stream(users.spliterator(), false)
                 .collect(Collectors.toList());
         modelUsers.setAll(uList);
-        List<Tuple<Utilizator, Date>> friendRequests = service.getFriendRequests(userId);
-        List<Utilizator> frList = friendRequests.stream()
-                .map(x -> x.getLeft())
-                .collect(Collectors.toList());
-        System.out.println(frList);
-        modelUsersFriendRequests.setAll(frList);
+        List<Tuple<Utilizator, Prietenie>> friendRequests = service.getFriendRequests(userId);
+        modelUsersFriendRequests.setAll(friendRequests);
     }
 
     public void initialize() {
@@ -70,7 +75,19 @@ public class UserInterface {
         tableView.setItems(model);
         tableColumnUser.setCellValueFactory(new PropertyValueFactory<Utilizator, String>("username"));
         tableViewUsers.setItems(modelUsers);
-        tableColumnFriendRequests.setCellValueFactory(new PropertyValueFactory<Utilizator, String>("username"));
+        tableColumnFriendRequestsUsername.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getLeft().getUsername()));
+        tableColumnFriendRequestsDate.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getRight().getDate().toString()));
+        tableColumnFriendRequestsStatus.setCellValueFactory(x -> {
+            switch(x.getValue().getRight().getStatus())
+            {
+                default:
+                    return new SimpleStringProperty("pending");
+                case 2:
+                    return new SimpleStringProperty("approved");
+                case 3:
+                    return new SimpleStringProperty("rejected");
+            }
+        });
         tableViewFriendRequests.setItems(modelUsersFriendRequests);
     }
 
@@ -80,6 +97,7 @@ public class UserInterface {
         if(selectedUser != null) {
             try{
                 service.addFriend(userId, selectedUser.getId());
+                refreshModels();
             } catch (ValidationException e) {
                 MessageAlert.showErrorMessage(null,e.getMessage());
             }
@@ -94,6 +112,7 @@ public class UserInterface {
             try{
                 service.deleteFriend(userId, selectedUser.getId());
                 tableView.getItems().removeAll(tableView.getSelectionModel().getSelectedItem());
+                refreshModels();
             } catch (ValidationException e) {
                 MessageAlert.showErrorMessage(null,e.getMessage());
             }
@@ -103,11 +122,12 @@ public class UserInterface {
     }
 
     public void handleAcceptFriendRequest(ActionEvent actionEvent) {
-        Utilizator selectedUser = tableViewFriendRequests.getSelectionModel().getSelectedItem();
+        Tuple<Utilizator, Prietenie> selectedUser = tableViewFriendRequests.getSelectionModel().getSelectedItem();
         if(selectedUser != null) {
             try{
-                service.answerFriendRequest(userId, selectedUser.getId(), 2);
-                tableViewFriendRequests.getItems().removeAll(tableViewFriendRequests.getSelectionModel().getSelectedItem());
+                if(selectedUser.getRight().getId().getLeft() == userId) throw new ValidationException("Nu poti raspunde la o cerere trimisa de tine!");
+                service.answerFriendRequest(userId, selectedUser.getLeft().getId(), 2);
+                refreshModels();
             } catch (ValidationException e) {
                 MessageAlert.showErrorMessage(null,e.getMessage());
             }
@@ -117,11 +137,12 @@ public class UserInterface {
     }
 
     public void handleRejectFriendRequest(ActionEvent actionEvent) {
-        Utilizator selectedUser = tableViewFriendRequests.getSelectionModel().getSelectedItem();
+        Tuple<Utilizator, Prietenie> selectedUser = tableViewFriendRequests.getSelectionModel().getSelectedItem();
         if(selectedUser != null) {
             try{
-                service.answerFriendRequest(userId, selectedUser.getId(), 3);
-                tableViewFriendRequests.getItems().removeAll(tableViewFriendRequests.getSelectionModel().getSelectedItem());
+                if(selectedUser.getRight().getId().getLeft() == userId) throw new ValidationException("Nu poti raspunde la o cerere trimisa de tine!");
+                service.answerFriendRequest(userId, selectedUser.getLeft().getId(), 3);
+                refreshModels();
             } catch (ValidationException e) {
                 MessageAlert.showErrorMessage(null,e.getMessage());
             }
