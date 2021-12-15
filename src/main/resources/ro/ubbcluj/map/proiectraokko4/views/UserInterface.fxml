@@ -42,7 +42,9 @@
                                     </HBox>
                                     <TableView fx:id="tableViewFriendRequests" prefHeight="90.0" prefWidth="200.0">
                                       <columns>
-                                        <TableColumn fx:id="tableColumnFriendRequests" prefWidth="75.0" text="Friend Requests" />
+                                        <TableColumn fx:id="tableColumnFriendRequestsUsername" prefWidth="130.0" text="Username" />
+                                          <TableColumn fx:id="tableColumnFriendRequestsDate" prefWidth="130.0" text="Date" />
+                                          <TableColumn fx:id="tableColumnFriendRequestsStatus" prefWidth="130.0" text="Status" />
                                       </columns>
                                     </TableView>
                                  </children>
