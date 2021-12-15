@@ -42,8 +42,10 @@ public class HelloApplication extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("views/login.fxml"));
         GridPane rootLayout = (GridPane)fxmlLoader.load();
         LoginController loginController = fxmlLoader.getController();
+        rootLayout.setId("GridPane");
         loginController.setService(service);
         Scene scene = new Scene(rootLayout, 320, 240);
+        scene.getStylesheets().addAll(this.getClass().getResource("css/BG.css").toExternalForm());
         primaryStage.setTitle("Log in!");
         primaryStage.setScene(scene);
         primaryStage.show();
