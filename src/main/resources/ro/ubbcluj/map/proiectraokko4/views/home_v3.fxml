@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXListCell?>
+<?import com.jfoenix.controls.JFXListView?>
+<?import com.jfoenix.controls.JFXTextArea?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="399.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ro.ubbcluj.map.proiectraokko4.UI_v2_Controller">
+   <children>
+      <AnchorPane fx:id="TopBar" prefHeight="60.0" prefWidth="400.0" style="-fx-background-color: #b3b3ff;" AnchorPane.bottomAnchor="590.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <ImageView fitHeight="60.0" fitWidth="49.0">
+               <image>
+                  <Image url="@../images/icons8_less_than_60px.png" />
+               </image>
+            </ImageView>
+         </children></AnchorPane>
+      <AnchorPane fx:id="BottomBar" layoutY="590.0" prefHeight="60.0" prefWidth="400.0" style="-fx-background-color: #000033;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="590.0">
+         <children>
+            <ImageView fx:id="ChatImg" fitHeight="49.0" fitWidth="49.0" layoutX="42.0" layoutY="6.0" onMousePressed="#handleButtonAction">
+               <image>
+                  <Image url="@../images/icons8_home_32px_1.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="HomeImg" fitHeight="49.0" fitWidth="49.0" layoutX="309.0" layoutY="6.0" onMousePressed="#handleButtonAction">
+               <image>
+                  <Image url="@../images/icons8_customer_32px.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="SearchImg" fitHeight="49.0" fitWidth="49.0" layoutX="175.0" layoutY="6.0" onMousePressed="#handleButtonAction">
+               <image>
+                  <Image url="@../images/icons8_search_32px.png" />
+               </image>
+            </ImageView>
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="SearchPage" layoutX="10.0" layoutY="70.0" prefHeight="530.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
+         <children>
+            <JFXTextArea layoutX="27.0" layoutY="14.0" prefHeight="104.0" prefWidth="339.0" style="-fx-border-radius: 10px; -jfx-focus-color: #33cc33;" AnchorPane.bottomAnchor="465.0" AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="20.0" />
+            <JFXListCell layoutX="39.0" layoutY="96.0" prefHeight="423.0" prefWidth="321.0" style="-fx-background-color: #b3b3ff;" />
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="HomePage" layoutY="60.0" prefHeight="530.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
+         <children>
+            <ImageView layoutX="148.0">
+               <image>
+                  <Image url="@../images/icons8_male_user_104px.png" />
+               </image>
+            </ImageView>
+            <JFXButton layoutX="148.0" layoutY="476.0" prefHeight="30.0" prefWidth="104.0" style="-fx-border-radius: 5em; -fx-background-radius: 5em; -fx-background-color: #6666ff;" text="Edit Profile" />
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="ChatPage" layoutX="10.0" layoutY="70.0" prefHeight="530.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
+         <children>
+            <JFXListView fx:id="ChatList" layoutX="8.0" layoutY="14.0" prefHeight="513.0" prefWidth="383.0" style="-fx-background-color: #b3b3ff;" />
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>

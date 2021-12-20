@@ -39,14 +39,14 @@ public class HelloApplication extends Application {
         Repository<Long, Message> repoMsgDb = new MessageDbRepository("jdbc:postgresql://localhost:5432/Tema1", "postgres", "kokonel1002", new MessageValidator());
         service = new UtilizatorService(repoDb, repoFDb, repoMsgDb);
 
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("views/login.fxml"));
-        GridPane rootLayout = (GridPane)fxmlLoader.load();
-        LoginController loginController = fxmlLoader.getController();
-        rootLayout.setId("GridPane");
-        loginController.setService(service);
-        Scene scene = new Scene(rootLayout, 320, 240);
-        scene.getStylesheets().addAll(this.getClass().getResource("css/BG.css").toExternalForm());
-        primaryStage.setTitle("Log in!");
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("views/home_v3.fxml"));
+        AnchorPane rootLayout = (AnchorPane)fxmlLoader.load();
+        UI_v2_Controller loginController = fxmlLoader.getController();
+//        rootLayout.setId("GridPane");
+//        loginController.setService(service);
+        Scene scene = new Scene(rootLayout);
+//        scene.getStylesheets().addAll(this.getClass().getResource("css/BG.css").toExternalForm());
+//        primaryStage.setTitle("Log in!");
         primaryStage.setScene(scene);
         primaryStage.show();
 

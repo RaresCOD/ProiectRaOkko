@@ -1,5 +1,6 @@
 module ro.ubbcluj.map.proiectraokko4 {
     requires javafx.controls;
+    requires com.jfoenix;
     requires javafx.fxml;
 
     requires org.controlsfx.controls;
