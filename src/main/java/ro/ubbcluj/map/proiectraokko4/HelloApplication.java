@@ -43,7 +43,7 @@ public class HelloApplication extends Application {
         AnchorPane rootLayout = (AnchorPane)fxmlLoader.load();
         UI_v2_Controller loginController = fxmlLoader.getController();
 //        rootLayout.setId("GridPane");
-//        loginController.setService(service);
+        loginController.setService(service);
         Scene scene = new Scene(rootLayout);
 //        scene.getStylesheets().addAll(this.getClass().getResource("css/BG.css").toExternalForm());
 //        primaryStage.setTitle("Log in!");
