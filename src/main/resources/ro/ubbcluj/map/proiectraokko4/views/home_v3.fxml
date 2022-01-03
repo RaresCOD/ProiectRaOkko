@@ -1,26 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
-<?import com.jfoenix.controls.JFXCheckBox?>
-<?import com.jfoenix.controls.JFXListCell?>
+<?import com.jfoenix.controls.JFXComboBox?>
 <?import com.jfoenix.controls.JFXListView?>
+<?import com.jfoenix.controls.JFXSlider?>
 <?import com.jfoenix.controls.JFXTextArea?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="399.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ro.ubbcluj.map.proiectraokko4.UI_v2_Controller">
    <children>
-      <AnchorPane fx:id="TopBar" prefHeight="60.0" prefWidth="400.0" style="-fx-background-color: #b3b3ff;" AnchorPane.bottomAnchor="590.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <AnchorPane fx:id="EditPage" layoutX="10.0" layoutY="70.0" prefHeight="530.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
          <children>
-            <ImageView fitHeight="60.0" fitWidth="49.0">
+            <ImageView layoutX="148.0">
                <image>
-                  <Image url="@../images/icons8_less_than_60px.png" />
+                  <Image url="@../images/icons8_male_user_104px.png" />
                </image>
             </ImageView>
-         </children></AnchorPane>
+            <JFXButton layoutX="148.0" layoutY="476.0" onAction="#handleEditProfile" prefHeight="30.0" prefWidth="104.0" style="-fx-border-radius: 5em; -fx-background-radius: 5em; -fx-background-color: #6666ff;" text="Save" />
+            <JFXTextArea labelFloat="true" layoutX="80.0" layoutY="132.0" prefHeight="27.0" prefWidth="242.0" promptText="Username" />
+            <JFXTextArea labelFloat="true" layoutX="74.0" layoutY="186.0" prefHeight="38.0" prefWidth="251.0" promptText="Password" />
+            <JFXSlider layoutX="182.0" layoutY="258.0" />
+            <Label layoutX="124.0" layoutY="261.0" text="Age" />
+            <JFXComboBox fx:id="GenderBox" labelFloat="true" layoutX="155.0" layoutY="325.0" promptText="Gender" />
+            <ImageView layoutX="33.0" layoutY="135.0">
+               <image>
+                  <Image url="@../images/icons8_customer_32px.png" />
+               </image>
+            </ImageView>
+            <ImageView fitHeight="38.0" fitWidth="32.0" layoutX="33.0" layoutY="186.0">
+               <image>
+                  <Image url="@../images/icons8_lock_60px.png" />
+               </image>
+            </ImageView>
+         </children>
+      </AnchorPane>
       <AnchorPane fx:id="BottomBar" layoutY="590.0" prefHeight="60.0" prefWidth="400.0" style="-fx-background-color: #000033;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="590.0">
          <children>
             <ImageView fx:id="ChatImg" fitHeight="49.0" fitWidth="49.0" layoutX="42.0" layoutY="6.0" onMousePressed="#handleButtonAction">
@@ -40,17 +58,6 @@
             </ImageView>
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="ChatPage" layoutX="10.0" layoutY="70.0" prefHeight="530.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
-         <children>
-            <JFXListView fx:id="ChatList" layoutX="8.0" layoutY="14.0" prefHeight="513.0" prefWidth="383.0" style="-fx-background-color: #b3b3ff;" />
-         </children>
-      </AnchorPane>
-      <AnchorPane fx:id="SearchPage" layoutX="10.0" layoutY="70.0" prefHeight="530.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
-         <children>
-            <JFXTextArea focusColor="#5d84f8" labelFloat="true" layoutX="27.0" layoutY="14.0" prefHeight="104.0" prefWidth="339.0" promptText="Search" style="-fx-border-radius: 10px; -jfx-focus-color: #33cc33;" unFocusColor="#abafee" AnchorPane.bottomAnchor="465.0" AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="20.0" />
-            <JFXListCell layoutX="39.0" layoutY="96.0" prefHeight="423.0" prefWidth="321.0" style="-fx-background-color: #b3b3ff;" />
-         </children>
-      </AnchorPane>
       <AnchorPane fx:id="HomePage" layoutY="60.0" prefHeight="530.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
          <children>
             <ImageView layoutX="148.0">
@@ -58,45 +65,41 @@
                   <Image url="@../images/icons8_male_user_104px.png" />
                </image>
             </ImageView>
-            <JFXButton layoutX="148.0" layoutY="476.0" prefHeight="30.0" prefWidth="104.0" style="-fx-border-radius: 5em; -fx-background-radius: 5em; -fx-background-color: #6666ff;" text="Edit Profile" />
+            <JFXButton layoutX="148.0" layoutY="476.0" onAction="#handleEditProfile" prefHeight="30.0" prefWidth="104.0" style="-fx-border-radius: 5em; -fx-background-radius: 5em; -fx-background-color: #6666ff;" text="Edit Profile" />
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="LoginPage" prefHeight="650.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <AnchorPane fx:id="TopBar" prefHeight="60.0" prefWidth="400.0" style="-fx-background-color: #b3b3ff;" AnchorPane.bottomAnchor="590.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <ImageView layoutX="148.0" layoutY="96.0">
+            <ImageView fitHeight="60.0" fitWidth="49.0" onMousePressed="#handleGoBack">
                <image>
-                  <Image url="@../images/icons8_male_user_104px.png" />
+                  <Image url="@../images/icons8_less_than_60px.png" />
                </image>
             </ImageView>
-            <JFXTextArea fx:id="username" focusColor="#5d84f8" labelFloat="true" layoutX="102.0" layoutY="268.0" prefHeight="30.0" prefWidth="195.0" promptText="Username" unFocusColor="#abafee">
-               <font>
-                  <Font name="SansSerif Regular" size="12.0" />
-               </font>
-            </JFXTextArea>
-            <JFXTextArea fx:id="password" accessibleRole="PASSWORD_FIELD" focusColor="#5d84f8" labelFloat="true" layoutX="102.0" layoutY="334.0" prefHeight="38.0" prefWidth="195.0" promptText="Password" styleClass="a" unFocusColor="#abafee">
-               <font>
-                  <Font name="SansSerif Regular" size="12.0" />
-               </font>
-            </JFXTextArea>
-            <JFXCheckBox layoutX="139.0" layoutY="395.0" text="Show password" />
-            <Label layoutX="122.0" layoutY="200.0" text="Welcome" textAlignment="CENTER" textFill="#6b6a6a">
-               <font>
-                  <Font name="SansSerif Regular" size="37.0" />
-               </font>
-            </Label>
-            <JFXButton buttonType="RAISED" layoutX="144.0" layoutY="455.0" onAction="#handleLoginButton" prefHeight="38.0" prefWidth="112.0" style="-fx-background-radius: 3em; -fx-border-radius: 3em; -fx-background-color: #6666ff;" text="Login" />
-            <Label layoutX="147.0" layoutY="426.0" text="Forgot password?" />
-            <Label layoutX="176.0" layoutY="618.0" text="Register" />
-            <ImageView layoutX="57.0" layoutY="271.0">
+            <ImageView layoutX="340.0" layoutY="15.0" onMousePressed="#handleFriendRequests">
                <image>
-                  <Image url="@../images/icons8_customer_32px.png" />
+                  <Image url="@../images/icons8_team_30px_1.png" />
                </image>
             </ImageView>
-            <ImageView fitHeight="38.0" fitWidth="32.0" layoutX="57.0" layoutY="335.0">
-               <image>
-                  <Image url="@../images/icons8_lock_60px.png" />
-               </image>
-            </ImageView>
+            <Text fx:id="TextUsername" fill="#6b6a6a" layoutX="62.0" layoutY="38.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="166.9830722808838">
+               <font>
+                  <Font name="SansSerif Regular" size="25.0" />
+               </font>
+            </Text>
+         </children></AnchorPane>
+      <AnchorPane fx:id="ChatPage" layoutX="10.0" layoutY="70.0" prefHeight="530.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
+         <children>
+            <JFXListView fx:id="ChatList" layoutX="8.0" layoutY="14.0" prefHeight="513.0" prefWidth="383.0" style="-fx-background-color: #b3b3ff;" />
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="FriendRequestPage" layoutX="10.0" layoutY="70.0" prefHeight="530.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
+         <children>
+            <JFXListView fx:id="FRList" layoutX="14.0" layoutY="14.0" prefHeight="503.0" prefWidth="370.0" style="-fx-background-color: #b3b3ff;" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0" />
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="SearchPage" layoutX="10.0" layoutY="70.0" prefHeight="530.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
+         <children>
+            <JFXTextArea focusColor="#5d84f8" labelFloat="true" layoutX="27.0" layoutY="14.0" prefHeight="104.0" prefWidth="339.0" promptText="Search" style="-fx-border-radius: 10px; -jfx-focus-color: #33cc33;" unFocusColor="#abafee" AnchorPane.bottomAnchor="465.0" AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="20.0" />
+            <JFXListView fx:id="SearchList" layoutX="36.0" layoutY="81.0" prefHeight="436.0" prefWidth="330.0" style="-fx-background-color: #b3b3ff;" AnchorPane.leftAnchor="35.0" AnchorPane.rightAnchor="35.0" />
          </children>
       </AnchorPane>
    </children>

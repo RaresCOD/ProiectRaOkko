@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXCheckBox?>
+<?import com.jfoenix.controls.JFXTextArea?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane fx:id="LoginPage" fx:controller="ro.ubbcluj.map.proiectraokko4.LoginController_v2" prefHeight="650.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ImageView layoutX="147.0" layoutY="96.0">
+         <image>
+            <Image url="@../images/icons8_male_user_104px.png" />
+         </image>
+      </ImageView>
+      <JFXTextArea fx:id="username" focusColor="#5d84f8" labelFloat="true" layoutX="101.0" layoutY="286.0" prefHeight="30.0" prefWidth="195.0" promptText="Username" unFocusColor="#abafee">
+         <font>
+            <Font name="SansSerif Regular" size="12.0" />
+         </font>
+      </JFXTextArea>
+      <JFXTextArea fx:id="password" accessibleRole="PASSWORD_FIELD" focusColor="#5d84f8" labelFloat="true" layoutX="101.0" layoutY="352.0" prefHeight="38.0" prefWidth="195.0" promptText="Password" styleClass="a" unFocusColor="#abafee">
+         <font>
+            <Font name="SansSerif Regular" size="12.0" />
+         </font>
+      </JFXTextArea>
+      <JFXCheckBox layoutX="138.0" layoutY="413.0" text="Show password" />
+      <Label layoutX="121.0" layoutY="200.0" text="Welcome" textAlignment="CENTER" textFill="#6b6a6a">
+         <font>
+            <Font name="SansSerif Regular" size="37.0" />
+         </font>
+      </Label>
+      <JFXButton buttonType="RAISED" layoutX="143.0" layoutY="473.0" onAction="#handleLoginButton" prefHeight="38.0" prefWidth="112.0" style="-fx-background-radius: 3em; -fx-border-radius: 3em; -fx-background-color: #6666ff;" text="Login" />
+      <Label layoutX="146.0" layoutY="444.0" text="Forgot password?" />
+      <Label layoutX="176.0" layoutY="618.0" text="Register" />
+      <ImageView layoutX="56.0" layoutY="289.0">
+         <image>
+            <Image url="@../images/icons8_customer_32px.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="38.0" fitWidth="32.0" layoutX="56.0" layoutY="353.0">
+         <image>
+            <Image url="@../images/icons8_lock_60px.png" />
+         </image>
+      </ImageView>
+      <Text fx:id="errorText" fill="#f85c5c" layoutX="78.0" layoutY="272.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="242.0" />
+   </children>
+</AnchorPane>

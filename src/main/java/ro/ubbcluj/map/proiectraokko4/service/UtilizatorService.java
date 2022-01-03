@@ -51,6 +51,10 @@ public class UtilizatorService {
         this.repoMessages = repoMessages;
     }
 
+    public Utilizator finduser(Long id) {
+        return repo.findOne(id);
+    }
+
     /**
      *
      * @param firstName fn
