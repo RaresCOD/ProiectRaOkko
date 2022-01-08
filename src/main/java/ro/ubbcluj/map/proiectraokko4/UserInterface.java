@@ -14,6 +14,8 @@ import ro.ubbcluj.map.proiectraokko4.domain.Prietenie;
 import ro.ubbcluj.map.proiectraokko4.domain.Tuple;
 import ro.ubbcluj.map.proiectraokko4.domain.Utilizator;
 import ro.ubbcluj.map.proiectraokko4.domain.validators.ValidationException;
+import ro.ubbcluj.map.proiectraokko4.service.FriendshipService;
+import ro.ubbcluj.map.proiectraokko4.service.MessageService;
 import ro.ubbcluj.map.proiectraokko4.service.UtilizatorService;
 
 import java.sql.Date;
@@ -23,7 +25,10 @@ import java.util.stream.StreamSupport;
 
 public class UserInterface {
 
-    UtilizatorService service;
+    UtilizatorService userService;
+    FriendshipService friendshipService;
+    MessageService messageService;
+
     Long userId;
     ObservableList<Utilizator> model = FXCollections.observableArrayList();
     ObservableList<Utilizator> modelUsers = FXCollections.observableArrayList();
@@ -48,25 +53,26 @@ public class UserInterface {
     @FXML
     TableColumn<Tuple<Utilizator, Prietenie>, String> tableColumnFriendRequestsStatus;
 
-    public void setService(UtilizatorService service, Long userId) {
-
-        this.service = service;
+    public void setService(UtilizatorService userService, FriendshipService friendshipService, MessageService messageService, Long userId) {
+        this.userService = userService;
+        this.friendshipService = friendshipService;
+        this.messageService = messageService;
         this.userId = userId;
         refreshModels();
     }
 
     private void refreshModels() {
-        List<Tuple<Utilizator, Date>> friends = service.getFriends(userId);
+        List<Tuple<Utilizator, Date>> friends = friendshipService.getFriends(userId);
         List<Utilizator> fList = friends.stream()
                 .map(x -> x.getLeft())
                 .collect(Collectors.toList());
         System.out.println(fList);
         model.setAll(fList);
-        Iterable<Utilizator> users = service.getAll();
+        Iterable<Utilizator> users = userService.getAll();
         List<Utilizator> uList = StreamSupport.stream(users.spliterator(), false)
                 .collect(Collectors.toList());
         modelUsers.setAll(uList);
-        List<Tuple<Utilizator, Prietenie>> friendRequests = service.getFriendRequests(userId);
+        List<Tuple<Utilizator, Prietenie>> friendRequests = friendshipService.getFriendRequests(userId);
         modelUsersFriendRequests.setAll(friendRequests);
     }
 
@@ -96,7 +102,7 @@ public class UserInterface {
         Utilizator selectedUser = tableViewUsers.getSelectionModel().getSelectedItem();
         if(selectedUser != null) {
             try{
-                service.addFriend(userId, selectedUser.getId());
+                friendshipService.addFriend(userId, selectedUser.getId());
                 refreshModels();
             } catch (ValidationException e) {
                 MessageAlert.showErrorMessage(null,e.getMessage());
@@ -110,7 +116,7 @@ public class UserInterface {
         Utilizator selectedUser = tableView.getSelectionModel().getSelectedItem();
         if(selectedUser != null) {
             try{
-                service.deleteFriend(userId, selectedUser.getId());
+                friendshipService.deleteFriend(userId, selectedUser.getId());
                 tableView.getItems().removeAll(tableView.getSelectionModel().getSelectedItem());
                 refreshModels();
             } catch (ValidationException e) {
@@ -126,7 +132,7 @@ public class UserInterface {
         if(selectedUser != null) {
             try{
                 if(selectedUser.getRight().getId().getLeft() == userId) throw new ValidationException("Nu poti raspunde la o cerere trimisa de tine!");
-                service.answerFriendRequest(userId, selectedUser.getLeft().getId(), 2);
+                friendshipService.answerFriendRequest(userId, selectedUser.getLeft().getId(), 2);
                 refreshModels();
             } catch (ValidationException e) {
                 MessageAlert.showErrorMessage(null,e.getMessage());
@@ -141,7 +147,7 @@ public class UserInterface {
         if(selectedUser != null) {
             try{
                 if(selectedUser.getRight().getId().getLeft() == userId) throw new ValidationException("Nu poti raspunde la o cerere trimisa de tine!");
-                service.answerFriendRequest(userId, selectedUser.getLeft().getId(), 3);
+                friendshipService.answerFriendRequest(userId, selectedUser.getLeft().getId(), 3);
                 refreshModels();
             } catch (ValidationException e) {
                 MessageAlert.showErrorMessage(null,e.getMessage());

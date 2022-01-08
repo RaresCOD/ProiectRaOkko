@@ -25,6 +25,8 @@ import javafx.stage.Stage;
 import ro.ubbcluj.map.proiectraokko4.domain.Prietenie;
 import ro.ubbcluj.map.proiectraokko4.domain.Tuple;
 import ro.ubbcluj.map.proiectraokko4.domain.Utilizator;
+import ro.ubbcluj.map.proiectraokko4.service.FriendshipService;
+import ro.ubbcluj.map.proiectraokko4.service.MessageService;
 import ro.ubbcluj.map.proiectraokko4.service.UtilizatorService;
 
 import java.io.IOException;
@@ -35,7 +37,10 @@ import java.util.stream.StreamSupport;
 
 public class UI_v2_Controller {
 
-    UtilizatorService service;
+    UtilizatorService userService;
+    FriendshipService friendshipService;
+    MessageService messageService;
+
     ObservableList<String> model = FXCollections.observableArrayList();
     ObservableList<String> modelUsers = FXCollections.observableArrayList();
     private Long UserId;
@@ -54,33 +59,34 @@ public class UI_v2_Controller {
 
 
 
-    public void setService(UtilizatorService service, Long userId) {
-
-        this.service = service;
+    public void setService(UtilizatorService userService, FriendshipService friendshipService, MessageService messageService, Long userId) {
+        this.userService = userService;
+        this.friendshipService = friendshipService;
+        this.messageService = messageService;
         this.UserId = userId;
         load();
     }
 
     private void load() {
-        List<Tuple<Utilizator, Date>> friends = service.getFriends(UserId);
+        List<Tuple<Utilizator, Date>> friends = friendshipService.getFriends(UserId);
         List<String> fList = friends.stream()
                 .map(x -> x.getLeft().getUsername())
                 .collect(Collectors.toList());
         model.setAll(fList);
 
-        Iterable<Utilizator> users = service.getAll();
+        Iterable<Utilizator> users = userService.getAll();
         List<String> uList = StreamSupport.stream(users.spliterator(), false)
                 .map(x -> x.getUsername())
                 .collect(Collectors.toList());
         modelUsers.setAll(uList);
 
-        List<Tuple<Utilizator, Prietenie>> friendRequests = service.getFriendRequests(UserId);
+        List<Tuple<Utilizator, Prietenie>> friendRequests = friendshipService.getFriendRequests(UserId);
         List<String> frlist = friendRequests.stream()
                         .map(x -> x.getLeft().getUsername())
                         .collect(Collectors.toList());
         modelUsersFriendRequests.setAll(frlist);
 
-        Utilizator user = service.finduser(UserId);
+        Utilizator user = userService.finduser(UserId);
         TextUsername.setText(user.getUsername());
     }
 

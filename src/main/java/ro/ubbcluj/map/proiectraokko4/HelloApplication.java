@@ -24,26 +24,32 @@ import ro.ubbcluj.map.proiectraokko4.repository.Repository;
 import ro.ubbcluj.map.proiectraokko4.repository.db.FriendshipDbRepository;
 import ro.ubbcluj.map.proiectraokko4.repository.db.MessageDbRepository;
 import ro.ubbcluj.map.proiectraokko4.repository.db.UtilizatorDbRepository;
+import ro.ubbcluj.map.proiectraokko4.service.FriendshipService;
+import ro.ubbcluj.map.proiectraokko4.service.MessageService;
 import ro.ubbcluj.map.proiectraokko4.service.UtilizatorService;
 
 import java.io.IOException;
 
 public class HelloApplication extends Application {
 
-    UtilizatorService service;
+    UtilizatorService userService;
+    FriendshipService friendshipService;
+    MessageService messageService;
 
     @Override
     public void start(Stage primaryStage) throws IOException {
         Repository<Long, Utilizator> repoDb = new UtilizatorDbRepository("jdbc:postgresql://localhost:5432/Tema1", "postgres", "kokonel1002", new UtilizatorValidator());
         Repository<Tuple<Long, Long>, Prietenie> repoFDb = new FriendshipDbRepository("jdbc:postgresql://localhost:5432/Tema1", "postgres", "kokonel1002", new FriendshipValidator());
         Repository<Long, Message> repoMsgDb = new MessageDbRepository("jdbc:postgresql://localhost:5432/Tema1", "postgres", "kokonel1002", new MessageValidator());
-        service = new UtilizatorService(repoDb, repoFDb, repoMsgDb);
+        userService = new UtilizatorService(repoDb, repoFDb);
+        friendshipService = new FriendshipService(repoDb, repoFDb);
+        messageService = new MessageService(repoDb, repoMsgDb);
 
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("views/login_v2.fxml"));
         AnchorPane rootLayout = (AnchorPane)fxmlLoader.load();
         LoginController_v2 loginController = fxmlLoader.getController();
 //        rootLayout.setId("GridPane");
-        loginController.setService(service);
+        loginController.setService(userService, friendshipService, messageService);
         Scene scene = new Scene(rootLayout);
 //        scene.getStylesheets().addAll(this.getClass().getResource("css/BG.css").toExternalForm());
 //        primaryStage.setTitle("Log in!");

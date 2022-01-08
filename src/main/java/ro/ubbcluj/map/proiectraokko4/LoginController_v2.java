@@ -10,21 +10,27 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import ro.ubbcluj.map.proiectraokko4.service.FriendshipService;
+import ro.ubbcluj.map.proiectraokko4.service.MessageService;
 import ro.ubbcluj.map.proiectraokko4.service.UtilizatorService;
 
 import java.io.IOException;
 
 public class LoginController_v2 {
 
-    UtilizatorService service;
+    UtilizatorService userService;
+    FriendshipService friendshipService;
+    MessageService messageService;
 
     @FXML
     private TextArea username, password;
     @FXML
     private Text errorText;
 
-    public void setService(UtilizatorService service) {
-        this.service = service;
+    public void setService(UtilizatorService userService, FriendshipService friendshipService, MessageService messageService) {
+        this.userService = userService;
+        this.friendshipService = friendshipService;
+        this.messageService = messageService;
     }
 
     void initialize() {
@@ -33,7 +39,7 @@ public class LoginController_v2 {
 
     public void handleLoginButton(ActionEvent actionEvent) {
         String userName = username.getText();
-        Long id = service.Login(userName);
+        Long id = userService.Login(userName);
         if( id != null) {
             try {
                 FXMLLoader fxmlLoader = new FXMLLoader();
@@ -42,7 +48,7 @@ public class LoginController_v2 {
                 Stage stage = new Stage();
                 stage.setScene(scene);
                 UI_v2_Controller userInterface = fxmlLoader.getController();
-                userInterface.setService(service, id);
+                userInterface.setService(userService, friendshipService, messageService, id);
                 stage.show();
                 ((Node)(actionEvent.getSource())).getScene().getWindow().hide();
             } catch (IOException e) {
