@@ -24,6 +24,7 @@ import ro.ubbcluj.map.proiectraokko4.repository.Repository;
 import ro.ubbcluj.map.proiectraokko4.repository.db.FriendshipDbRepository;
 import ro.ubbcluj.map.proiectraokko4.repository.db.MessageDbRepository;
 import ro.ubbcluj.map.proiectraokko4.repository.db.UtilizatorDbRepository;
+import ro.ubbcluj.map.proiectraokko4.repository.paging.PagingRepository;
 import ro.ubbcluj.map.proiectraokko4.service.FriendshipService;
 import ro.ubbcluj.map.proiectraokko4.service.MessageService;
 import ro.ubbcluj.map.proiectraokko4.service.UtilizatorService;
@@ -38,10 +39,10 @@ public class HelloApplication extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        Repository<Long, Utilizator> repoDb = new UtilizatorDbRepository("jdbc:postgresql://localhost:5432/Tema1", "postgres", "kokonel1002", new UtilizatorValidator());
-        Repository<Tuple<Long, Long>, Prietenie> repoFDb = new FriendshipDbRepository("jdbc:postgresql://localhost:5432/Tema1", "postgres", "kokonel1002", new FriendshipValidator());
-        Repository<Long, Message> repoMsgDb = new MessageDbRepository("jdbc:postgresql://localhost:5432/Tema1", "postgres", "kokonel1002", new MessageValidator());
-        userService = new UtilizatorService(repoDb, repoFDb);
+        PagingRepository<Long, Utilizator> repoDb = new UtilizatorDbRepository("jdbc:postgresql://localhost:5432/Tema1", "postgres", "kokonel1002", new UtilizatorValidator());
+        PagingRepository<Tuple<Long, Long>, Prietenie> repoFDb = new FriendshipDbRepository("jdbc:postgresql://localhost:5432/Tema1", "postgres", "kokonel1002", new FriendshipValidator());
+        PagingRepository<Long, Message> repoMsgDb = new MessageDbRepository("jdbc:postgresql://localhost:5432/Tema1", "postgres", "kokonel1002", new MessageValidator());
+        userService = new UtilizatorService(repoDb);
         friendshipService = new FriendshipService(repoDb, repoFDb);
         messageService = new MessageService(repoDb, repoMsgDb);
 

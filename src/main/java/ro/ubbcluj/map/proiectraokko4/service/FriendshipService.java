@@ -7,22 +7,30 @@ import ro.ubbcluj.map.proiectraokko4.domain.Tuple;
 import ro.ubbcluj.map.proiectraokko4.domain.Utilizator;
 import ro.ubbcluj.map.proiectraokko4.domain.validators.ValidationException;
 import ro.ubbcluj.map.proiectraokko4.repository.Repository;
+import ro.ubbcluj.map.proiectraokko4.repository.paging.Page;
+import ro.ubbcluj.map.proiectraokko4.repository.paging.Pageable;
+import ro.ubbcluj.map.proiectraokko4.repository.paging.PageableImplementation;
+import ro.ubbcluj.map.proiectraokko4.repository.paging.PagingRepository;
+import ro.ubbcluj.map.proiectraokko4.utils.observer.Observable;
+import ro.ubbcluj.map.proiectraokko4.utils.observer.Observer;
+import ro.ubbcluj.map.proiectraokko4.utils.observer.TypeOfObservation;
 
 import java.sql.Date;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
-public class FriendshipService {
+public class FriendshipService implements Observable {
 
-    Repository<Long, Utilizator> userRepo;
-    Repository<Tuple<Long, Long>, Prietenie> friendRepo;
+    PagingRepository<Long, Utilizator> userRepo;
+    PagingRepository<Tuple<Long, Long>, Prietenie> friendRepo;
 
     /**
      *
      * @param userRepo user userRepo
      * @param friendRepo friendship userRepo
      */
-    public FriendshipService(Repository<Long, Utilizator> userRepo, Repository<Tuple<Long, Long>, Prietenie> friendRepo) {
+    public FriendshipService(PagingRepository<Long, Utilizator> userRepo, PagingRepository<Tuple<Long, Long>, Prietenie> friendRepo) {
         this.userRepo = userRepo;
         this.friendRepo = friendRepo;
     }
@@ -196,5 +204,37 @@ public class FriendshipService {
         List<Utilizator> users = userRepo.findAll();
         DFS dfs = new DFS(users.size(), friendRepo.findAll(), users);
         return dfs.execute2();
+    }
+
+    private int pageNumber = 0;
+    private int pageSize = 3;
+
+    public List<Prietenie> getNextFriends() {
+        this.pageNumber++;
+        return getFriendsOnPage(this.pageNumber);
+    }
+
+    public List<Prietenie> getFriendsOnPage(int page) {
+        this.pageNumber = page;
+        Pageable pageable = new PageableImplementation(page, this.pageSize);
+        Page<Prietenie> messagesPage = friendRepo.findAll(pageable);
+        return messagesPage.getContent().toList();
+    }
+
+    private List<Observer> observers=new ArrayList<>();
+
+    @Override
+    public void addObserver(Observer e) {
+        observers.add(e);
+    }
+
+    @Override
+    public void removeObserver(Observer e) {
+        observers.remove(e);
+    }
+
+    @Override
+    public void notifyObservers() {
+        observers.stream().forEach(x->x.update(TypeOfObservation.FRIENDSHIP));
     }
 }

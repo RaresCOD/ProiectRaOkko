@@ -6,17 +6,24 @@ import ro.ubbcluj.map.proiectraokko4.domain.Tuple;
 import ro.ubbcluj.map.proiectraokko4.domain.Utilizator;
 import ro.ubbcluj.map.proiectraokko4.domain.validators.ValidationException;
 import ro.ubbcluj.map.proiectraokko4.repository.Repository;
+import ro.ubbcluj.map.proiectraokko4.repository.paging.Page;
+import ro.ubbcluj.map.proiectraokko4.repository.paging.Pageable;
+import ro.ubbcluj.map.proiectraokko4.repository.paging.PageableImplementation;
+import ro.ubbcluj.map.proiectraokko4.repository.paging.PagingRepository;
+import ro.ubbcluj.map.proiectraokko4.utils.observer.Observable;
+import ro.ubbcluj.map.proiectraokko4.utils.observer.Observer;
+import ro.ubbcluj.map.proiectraokko4.utils.observer.TypeOfObservation;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MessageService {
+public class MessageService implements Observable {
 
-    Repository<Long, Message> messagesRepo;
-    Repository<Long, Utilizator> userRepo;
+    PagingRepository<Long, Message> messagesRepo;
+    PagingRepository<Long, Utilizator> userRepo;
 
-    public MessageService(Repository<Long, Utilizator> userRepo, Repository<Long, Message> messagesRepo) {
+    public MessageService(PagingRepository<Long, Utilizator> userRepo, PagingRepository<Long, Message> messagesRepo) {
         this.userRepo = userRepo;
         this.messagesRepo = messagesRepo;
     }
@@ -97,5 +104,37 @@ public class MessageService {
         } catch (ValidationException e) {
             System.out.println(e);
         }
+    }
+
+    private int pageNumber = 0;
+    private int pageSize = 3;
+
+    public List<Message> getNextMessages() {
+        this.pageNumber++;
+        return getMessagesOnPage(this.pageNumber);
+    }
+
+    public List<Message> getMessagesOnPage(int page) {
+        this.pageNumber = page;
+        Pageable pageable = new PageableImplementation(page, this.pageSize);
+        Page<Message> messagesPage = messagesRepo.findAll(pageable);
+        return messagesPage.getContent().toList();
+    }
+
+    private List<Observer> observers=new ArrayList<>();
+
+    @Override
+    public void addObserver(Observer e) {
+        observers.add(e);
+    }
+
+    @Override
+    public void removeObserver(Observer e) {
+        observers.remove(e);
+    }
+
+    @Override
+    public void notifyObservers() {
+        observers.stream().forEach(x->x.update(TypeOfObservation.MESSAGE));
     }
 }

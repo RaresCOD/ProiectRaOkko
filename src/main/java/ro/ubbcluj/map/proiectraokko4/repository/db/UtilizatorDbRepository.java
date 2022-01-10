@@ -4,16 +4,18 @@ package ro.ubbcluj.map.proiectraokko4.repository.db;
 import ro.ubbcluj.map.proiectraokko4.domain.Utilizator;
 import ro.ubbcluj.map.proiectraokko4.domain.validators.Validator;
 import ro.ubbcluj.map.proiectraokko4.repository.Repository;
+import ro.ubbcluj.map.proiectraokko4.repository.paging.Page;
+import ro.ubbcluj.map.proiectraokko4.repository.paging.Pageable;
+import ro.ubbcluj.map.proiectraokko4.repository.paging.Paginator;
+import ro.ubbcluj.map.proiectraokko4.repository.paging.PagingRepository;
 
 import java.sql.*;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Repo care salveaza si aduce datele din baza de date "users"
  */
-public class UtilizatorDbRepository implements Repository<Long, Utilizator> {
+public class UtilizatorDbRepository implements PagingRepository<Long, Utilizator> {
     private String dbUrl;
     private String dbUsername;
     private String dbPassword;
@@ -180,6 +182,36 @@ public class UtilizatorDbRepository implements Repository<Long, Utilizator> {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public Page<Utilizator> findAll(Pageable pageable) {
+
+        String sql = "SELECT * FROM (SELECT *, ROW_NUMBER() over (ORDER BY id ASC) AS NoOfRows FROM users) AS Unused WHERE NoOfRows >= ? AND NoOfRows < ?";
+        Set<Utilizator> users = new HashSet<>();
+        try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+             PreparedStatement ps = connection.prepareStatement(sql)){
+
+            ps.setInt(1, pageable.getPageNumber() * pageable.getPageSize() + 1);
+            ps.setInt(2, (pageable.getPageNumber() + 1) * pageable.getPageSize() + 1);
+
+            ResultSet resultSet = ps.executeQuery();
+            while (resultSet.next()) {
+                Long id = resultSet.getLong("id");
+                String firstName = resultSet.getString("first_name");
+                String lastName = resultSet.getString("last_name");
+                String username = resultSet.getString("username");
+
+                Utilizator utilizator = new Utilizator(username, firstName, lastName);
+                utilizator.setId(id);
+                users.add(utilizator);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        Paginator<Utilizator> paginator = new Paginator<>(pageable, users.stream().toList());
+        return paginator.paginate();
     }
 }
 

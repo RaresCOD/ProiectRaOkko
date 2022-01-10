@@ -28,6 +28,8 @@ import ro.ubbcluj.map.proiectraokko4.domain.Utilizator;
 import ro.ubbcluj.map.proiectraokko4.service.FriendshipService;
 import ro.ubbcluj.map.proiectraokko4.service.MessageService;
 import ro.ubbcluj.map.proiectraokko4.service.UtilizatorService;
+import ro.ubbcluj.map.proiectraokko4.utils.observer.Observer;
+import ro.ubbcluj.map.proiectraokko4.utils.observer.TypeOfObservation;
 
 import java.io.IOException;
 import java.sql.Date;
@@ -35,16 +37,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-public class UI_v2_Controller {
+public class UI_v2_Controller implements Observer {
 
     UtilizatorService userService;
     FriendshipService friendshipService;
     MessageService messageService;
-
-    ObservableList<String> model = FXCollections.observableArrayList();
-    ObservableList<String> modelUsers = FXCollections.observableArrayList();
     private Long UserId;
-    ObservableList<String> modelUsersFriendRequests = FXCollections.observableArrayList();
+
+    ObservableList<String> FriendsModel = FXCollections.observableArrayList();
+    ObservableList<String> UsersModel = FXCollections.observableArrayList();
+    ObservableList<String> FriendRequestsModel = FXCollections.observableArrayList();
 
     @FXML
     private ImageView SearchImg, HomeImg, ChatImg;
@@ -53,7 +55,7 @@ public class UI_v2_Controller {
     @FXML
     private AnchorPane SearchPage, HomePage, ChatPage, EditPage, BottomBar, TopBar, FriendRequestPage;
     @FXML
-    private JFXListView<String> SearchList,ChatList;
+    private JFXListView<String> SearchList, ChatList;
     @FXML
     private JFXListView<String> FRList;
 
@@ -67,30 +69,44 @@ public class UI_v2_Controller {
         load();
     }
 
-    private void load() {
+    private void load()
+    {
+        Utilizator user = userService.finduser(UserId);
+        TextUsername.setText(user.getUsername());
+
+        initFriendsModel();
+        initUsersModel();
+        initFriendRequestsModel();
+    }
+
+    private void initFriendsModel()
+    {
         List<Tuple<Utilizator, Date>> friends = friendshipService.getFriends(UserId);
         List<String> fList = friends.stream()
                 .map(x -> x.getLeft().getUsername())
                 .collect(Collectors.toList());
-        model.setAll(fList);
+        FriendsModel.setAll(fList);
+    }
 
+    private void initUsersModel()
+    {
         Iterable<Utilizator> users = userService.getAll();
         List<String> uList = StreamSupport.stream(users.spliterator(), false)
                 .map(x -> x.getUsername())
                 .collect(Collectors.toList());
-        modelUsers.setAll(uList);
-
-        List<Tuple<Utilizator, Prietenie>> friendRequests = friendshipService.getFriendRequests(UserId);
-        List<String> frlist = friendRequests.stream()
-                        .map(x -> x.getLeft().getUsername())
-                        .collect(Collectors.toList());
-        modelUsersFriendRequests.setAll(frlist);
-
-        Utilizator user = userService.finduser(UserId);
-        TextUsername.setText(user.getUsername());
+        UsersModel.setAll(uList);
     }
 
-    private void startHP() {
+    private void initFriendRequestsModel()
+    {
+        List<Tuple<Utilizator, Prietenie>> friendRequests = friendshipService.getFriendRequests(UserId);
+        List<String> frlist = friendRequests.stream()
+                .map(x -> x.getLeft().getUsername())
+                .collect(Collectors.toList());
+        FriendRequestsModel.setAll(frlist);
+    }
+
+    private void initHomePage() {
         HomePage.setVisible(true);
         TopBar.setVisible(true);
         BottomBar.setVisible(true);
@@ -103,11 +119,11 @@ public class UI_v2_Controller {
     public void initialize() {
 //        ChatList.setItems(model);
 //        ChatList.getItems().add(new Utilizator("a","a", "a"));
-        startHP();
+        initHomePage();
 
-        ChatList.setItems(model);
-        SearchList.setItems(modelUsers);
-        FRList.setItems(modelUsersFriendRequests);
+        ChatList.setItems(FriendRequestsModel);
+        SearchList.setItems(UsersModel);
+        FRList.setItems(FriendRequestsModel);
 
     }
 
@@ -171,5 +187,21 @@ public class UI_v2_Controller {
 
     public void handleGoBack(MouseEvent mouseEvent) {
 
+    }
+
+    @Override
+    public void update(TypeOfObservation type) {
+        switch(type)
+        {
+            case USER:
+                initUsersModel();
+                break;
+            case FRIENDSHIP:
+                initFriendRequestsModel();
+                initFriendsModel();
+                break;
+            case MESSAGE:
+                break;
+        }
     }
 }
