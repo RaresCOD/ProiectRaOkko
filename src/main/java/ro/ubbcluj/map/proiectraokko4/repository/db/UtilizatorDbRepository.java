@@ -4,39 +4,41 @@ package ro.ubbcluj.map.proiectraokko4.repository.db;
 import ro.ubbcluj.map.proiectraokko4.domain.Utilizator;
 import ro.ubbcluj.map.proiectraokko4.domain.validators.Validator;
 import ro.ubbcluj.map.proiectraokko4.repository.Repository;
+import ro.ubbcluj.map.proiectraokko4.repository.paging.Page;
+import ro.ubbcluj.map.proiectraokko4.repository.paging.Pageable;
+import ro.ubbcluj.map.proiectraokko4.repository.paging.Paginator;
+import ro.ubbcluj.map.proiectraokko4.repository.paging.PagingRepository;
 
 import java.sql.*;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Repo care salveaza si aduce datele din baza de date "users"
  */
-public class UtilizatorDbRepository implements Repository<Long, Utilizator> {
-    private String url;
-    private String _username;
-    private String password;
+public class UtilizatorDbRepository implements PagingRepository<Long, Utilizator> {
+    private String dbUrl;
+    private String dbUsername;
+    private String dbPassword;
     private Validator<Utilizator> validator;
 
     /**
      *
-     * @param url url-ul cu care se conecteaza la baza de date
-     * @param username - usernameul
-     * @param password - parola
-     * @param validator - validator pentru prietenie
+     * @param dbUrl url-ul cu care se conecteaza la baza de date
+     * @param username - username-ul pentru baza de date
+     * @param dbPassword - parola pentru baza de date
+     * @param validator - validator pentru utilizator
      */
-    public UtilizatorDbRepository(String url, String username, String password, Validator<Utilizator> validator) {
-        this.url = url;
-        this._username = username;
-        this.password = password;
+    public UtilizatorDbRepository(String dbUrl, String username, String dbPassword, Validator<Utilizator> validator) {
+        this.dbUrl = dbUrl;
+        this.dbUsername = username;
+        this.dbPassword = dbPassword;
         this.validator = validator;
     }
     @Override
     public Utilizator findOne(Long id) {
         String sql = "select * from users where id = " + id;
 
-        try (Connection connection = DriverManager.getConnection(url, _username, password);
+        try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
         PreparedStatement ps = connection.prepareStatement(sql)) {
            ResultSet result = ps.executeQuery();
            while (result.next()) {
@@ -50,7 +52,7 @@ public class UtilizatorDbRepository implements Repository<Long, Utilizator> {
                        "inner join friendship\n" +
                        "on users.id = friendship.id1 or users.id = friendship.id2 \n" +
                        "where users.id = " + id;
-               try(Connection connection1 = DriverManager.getConnection(url, _username, password);
+               try(Connection connection1 = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
                PreparedStatement ps1 = connection1.prepareStatement(sql1)) {
                    ResultSet resultSet = ps1.executeQuery();
                    while(resultSet.next()) {
@@ -65,7 +67,7 @@ public class UtilizatorDbRepository implements Repository<Long, Utilizator> {
 
                        String sql2 = "select * from users where id = " + idBun;
 
-                       try(Connection connection2 = DriverManager.getConnection(url, _username, password);
+                       try(Connection connection2 = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
                            PreparedStatement ps2 = connection.prepareStatement(sql2)) {
                            ResultSet resultSet1 = ps2.executeQuery();
                            while (resultSet1.next()) {
@@ -91,7 +93,7 @@ public class UtilizatorDbRepository implements Repository<Long, Utilizator> {
     @Override
     public List<Utilizator> findAll() {
         Set<Utilizator> users = new HashSet<>();
-        try (Connection connection = DriverManager.getConnection(url, _username, password);
+        try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
              PreparedStatement statement = connection.prepareStatement("SELECT * from users");
              ResultSet resultSet = statement.executeQuery()) {
 
@@ -117,7 +119,7 @@ public class UtilizatorDbRepository implements Repository<Long, Utilizator> {
 
         String sql = "insert into users (username, first_name, last_name) values (?, ?, ?)";
 
-        try (Connection connection = DriverManager.getConnection(url, _username, password);
+        try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
              PreparedStatement ps = connection.prepareStatement(sql)) {
 
             ps.setString(1, entity.getUsername());
@@ -134,14 +136,35 @@ public class UtilizatorDbRepository implements Repository<Long, Utilizator> {
     @Override
     public Utilizator delete(Long id) {
 
-        String sql = "delete from users where id = " + id;
-
-        try (Connection connection = DriverManager.getConnection(url, _username, password);
-        PreparedStatement ps = connection.prepareStatement(sql)) {
+        String sql1 = "delete from users where id = ?";
+        try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+        PreparedStatement ps = connection.prepareStatement(sql1)) {
+            ps.setLong(1, id);
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        String sql2 = "delete from friendship where id1 = ? or id2 = ? ";
+        try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+             PreparedStatement ps = connection.prepareStatement(sql2)) {
+            ps.setLong(1, id);
+            ps.setLong(2, id);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        String sql3 = "delete from messages where from1 = ? or to1 = ? ";
+        try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+             PreparedStatement ps = connection.prepareStatement(sql3)) {
+            ps.setLong(1, id);
+            ps.setLong(2, id);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
         return null;
     }
 
@@ -149,7 +172,7 @@ public class UtilizatorDbRepository implements Repository<Long, Utilizator> {
     public Utilizator update(Utilizator entity) {
 
         String sql = "update users set first_name = ?, last_name = ?  where id = ? ";
-        try (Connection connection = DriverManager.getConnection(url, _username, password);
+        try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
         PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, entity.getFirstName());
             ps.setString(2, entity.getLastName());
@@ -159,6 +182,36 @@ public class UtilizatorDbRepository implements Repository<Long, Utilizator> {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public Page<Utilizator> findAll(Pageable pageable) {
+
+        String sql = "SELECT * FROM (SELECT *, ROW_NUMBER() over (ORDER BY id ASC) AS NoOfRows FROM users) AS Unused WHERE NoOfRows >= ? AND NoOfRows < ?";
+        Set<Utilizator> users = new HashSet<>();
+        try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+             PreparedStatement ps = connection.prepareStatement(sql)){
+
+            ps.setInt(1, pageable.getPageNumber() * pageable.getPageSize() + 1);
+            ps.setInt(2, (pageable.getPageNumber() + 1) * pageable.getPageSize() + 1);
+
+            ResultSet resultSet = ps.executeQuery();
+            while (resultSet.next()) {
+                Long id = resultSet.getLong("id");
+                String firstName = resultSet.getString("first_name");
+                String lastName = resultSet.getString("last_name");
+                String username = resultSet.getString("username");
+
+                Utilizator utilizator = new Utilizator(username, firstName, lastName);
+                utilizator.setId(id);
+                users.add(utilizator);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        Paginator<Utilizator> paginator = new Paginator<>(pageable, users.stream().toList());
+        return paginator.paginate();
     }
 }
 
