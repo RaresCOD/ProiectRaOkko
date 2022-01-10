@@ -1,6 +1,7 @@
 package ro.ubbcluj.map.proiectraokko4.service;
 
 
+import javafx.util.Pair;
 import ro.ubbcluj.map.proiectraokko4.Conexitate.DFS;
 import ro.ubbcluj.map.proiectraokko4.Message.Message;
 import ro.ubbcluj.map.proiectraokko4.domain.Prietenie;
@@ -8,11 +9,14 @@ import ro.ubbcluj.map.proiectraokko4.domain.Tuple;
 import ro.ubbcluj.map.proiectraokko4.domain.Utilizator;
 import ro.ubbcluj.map.proiectraokko4.domain.validators.ValidationException;
 import ro.ubbcluj.map.proiectraokko4.repository.Repository;
+import ro.ubbcluj.map.proiectraokko4.utils.Crypt;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.sql.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * service
@@ -61,8 +65,8 @@ public class UtilizatorService {
      * @param lastName ln
      * @return add user
      */
-    public Utilizator addUtilizator(String username, String firstName, String lastName) {
-        Utilizator nou = new Utilizator(username, firstName, lastName);
+    public Utilizator addUtilizator(String username, String firstName, String lastName, String password) {
+        Utilizator nou = new Utilizator(username, firstName, lastName, password);
         Long id = lastID() + 1L;
         nou.setId(id);
         try {
@@ -110,8 +114,8 @@ public class UtilizatorService {
      * @param lastName ln
      * @return update user
      */
-    public Utilizator updateUtilizator(Long id, String username, String firstName, String lastName) {
-        Utilizator nou = new Utilizator(username, firstName, lastName);
+    public Utilizator updateUtilizator(Long id, String username, String firstName, String lastName, String password) {
+        Utilizator nou = new Utilizator(username, firstName, lastName, password);
         nou.setId(id);
         try {
             Utilizator util = repo.update(nou);
@@ -298,8 +302,18 @@ public class UtilizatorService {
         return null;
     }
 
-    public Long Login(String userName) {
-        return getUserId(userName);
+    public Long Login(String userName, String pass) {
+        Long id = getUserId(userName);
+        if(id!=null) {
+            Utilizator user = repo.findOne(id);
+            if(Crypt.checkpw(pass, user.getPassword())) {
+                return id;
+            } else {
+                return null;
+            }
+
+        }
+        return null;
     }
 
     public void addMessage(Long id1, Long id2, String msg) {
@@ -334,6 +348,27 @@ public class UtilizatorService {
         } catch (ValidationException e) {
             System.out.println(e);
         }
+    }
+
+    public List<Message> getAllMessages(Long userId) {
+        Iterable<Message> all = repoMessages.findAll();
+        List<Message> rez = new ArrayList<>();
+        for(Message curent:all) {
+            List<Utilizator> list = curent.getTo();
+            Boolean found = false;
+            if (curent.getFrom().getId() == userId) {
+                found = true;
+            }
+            for(Utilizator to:list) {
+                if(to.getId() == userId) {
+                    found = true;
+                }
+            }
+            if (found == true) {
+                rez.add(curent);
+            }
+        }
+        return rez;
     }
 
     public void showAllMessagesForThisUser(Long userId) {
@@ -388,6 +423,56 @@ public class UtilizatorService {
 
     }
 
+    public static <T> boolean listEqualsIgnoreOrder(List<T> list1, List<T> list2) {
+        return new HashSet<>(list1).equals(new HashSet<>(list2));
+    }
 
+    public List<Message> findMsgs(Long userId, Long curentId) {
+        List<Message> allMsg = repoMessages.findAll();
+        List<Utilizator> userList = new ArrayList<>();
+        userList.add(repo.findOne(userId));
+        userList.add(repo.findOne(curentId));
+        List<Message> rezultat = new ArrayList<>();
+        for(Message curent : allMsg) {
+            List<Utilizator> to = curent.getTo();
+            Utilizator from = curent.getFrom();
+            to.add(from);
+            if (listEqualsIgnoreOrder(to, userList) == true) {
+                rezultat.add(curent);
+            }
+        }
+        return rezultat;
+    }
 
+    public List<String> allChats(Long userId) {
+        List<Message> allMsg = repoMessages.findAll();
+        List<List<Utilizator>> rez = new ArrayList<>();
+        List<String> rezBun = new ArrayList<>();
+        for(Message msg : allMsg) {
+            List<Utilizator> group = msg.getTo();
+            group.add(msg.getFrom());
+            boolean found = false;
+            for(Utilizator curent: group) {
+                if(curent.getId() == userId) {
+                    found = true;
+                }
+            }
+            for(List<Utilizator> curent: rez) {
+                if(listEqualsIgnoreOrder(curent, group) == true){
+                    found = false;
+                }
+            }
+            if(found == true) {
+                rez.add(group);
+                String grup = group.stream()
+                        .filter(x -> x.getId() != userId)
+                        .map(x -> x.getUsername())
+                        .reduce("", (u,v) -> u.concat(v + " "));
+
+                rezBun.add(grup);
+            }
+
+        }
+        return rezBun;
+    }
 }

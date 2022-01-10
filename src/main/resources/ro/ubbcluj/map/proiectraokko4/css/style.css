@@ -1,0 +1,42 @@
+.dark-gray-background{
+    -fx-background-color: #46474A;
+}
+
+.gray-background{
+    -fx-background-color: #636566;
+}
+
+.transparent-background{
+    -fx-background-color: rgba(0,0,0,0);
+}
+
+#chatRoomList.JFXListCell :odd {
+    -fx-cell-hover-color: #0093ff;
+    -fx-background-color: #7e7e7e;
+    -fx-font-weight: bold;
+    -fx-border-radius: 1em;
+    -fx-background-radius: 1em;
+}
+#chatRoomList.JFXListCell:odd:filled:hover{
+    -fx-cell-hover-color: #0093ff;
+    -fx-background-color: #7e7e7e;
+    -fx-font-weight: bold;
+    -fx-border-radius: 1em;
+    -fx-background-radius: 1em;
+}
+#chatRoomList.JFXListCell:odd:filled:selected:focused, #chatRoomList.JFXListCell:odd:filled:selected{
+    -fx-background-color: #16D0B7;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-border-radius: 1em;
+    -fx-background-radius: 1em;
+}
+
+#chatRoomList.JFXListCell:filled:hover {
+    -fx-cell-hover-color: transparent;
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-border-radius: 1em;
+    -fx-background-radius: 1em;
+}
