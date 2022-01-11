@@ -1,6 +1,7 @@
 package ro.ubbcluj.map.proiectraokko4.service;
 
 
+import ro.ubbcluj.map.proiectraokko4.domain.ProfilePage;
 import ro.ubbcluj.map.proiectraokko4.domain.Utilizator;
 import ro.ubbcluj.map.proiectraokko4.domain.validators.ValidationException;
 import ro.ubbcluj.map.proiectraokko4.repository.paging.Page;
@@ -117,17 +118,37 @@ public class UtilizatorService implements Observable {
     }
 
     private int pageNumber = 0;
-    private int pageSize = 3;
+    private int pageSize = 12;
 
-    public List<Utilizator> getNextUsers() {
+    public List<Utilizator> getNextUsers(String containsUsername)
+    {
         this.pageNumber++;
-        return getUsersOnPage(this.pageNumber);
+        List<Utilizator> rez = getUsersOnPageWithUsername(this.pageNumber, containsUsername);
+        if(rez.size() > 0)
+        {
+            return rez;
+        }
+        this.pageNumber--;
+        return null;
     }
 
-    public List<Utilizator> getUsersOnPage(int page) {
+    public List<Utilizator> getPreviousUsers(String containsUsername)
+    {
+        this.pageNumber--;
+        List<Utilizator> rez = getUsersOnPageWithUsername(this.pageNumber, containsUsername);
+        if(rez.size() > 0)
+        {
+            return rez;
+        }
+        this.pageNumber++;
+        return null;
+    }
+
+    public List<Utilizator> getUsersOnPageWithUsername(int page, String containsUsername)
+    {
         this.pageNumber = page;
         Pageable pageable = new PageableImplementation(page, this.pageSize);
-        Page<Utilizator> studentPage = userRepo.findAll(pageable);
+        Page<Utilizator> studentPage = userRepo.findAllLike(pageable, new Utilizator(containsUsername, null, null));
         return studentPage.getContent().toList();
     }
 

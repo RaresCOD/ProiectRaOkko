@@ -9,4 +9,6 @@ public interface PagingRepository<ID ,
         extends Repository<ID, E> {
 
     Page<E> findAll(Pageable pageable);   // Pageable e un fel de paginator
+
+    Page<E> findAllLike(Pageable pageable, E entity);
 }

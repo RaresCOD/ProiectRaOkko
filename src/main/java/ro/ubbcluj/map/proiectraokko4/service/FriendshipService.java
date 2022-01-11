@@ -3,6 +3,7 @@ package ro.ubbcluj.map.proiectraokko4.service;
 import ro.ubbcluj.map.proiectraokko4.Conexitate.DFS;
 import ro.ubbcluj.map.proiectraokko4.Message.Message;
 import ro.ubbcluj.map.proiectraokko4.domain.Prietenie;
+import ro.ubbcluj.map.proiectraokko4.domain.ProfilePage;
 import ro.ubbcluj.map.proiectraokko4.domain.Tuple;
 import ro.ubbcluj.map.proiectraokko4.domain.Utilizator;
 import ro.ubbcluj.map.proiectraokko4.domain.validators.ValidationException;
@@ -63,8 +64,13 @@ public class FriendshipService implements Observable {
         if (userRepo.findOne(id2) == null) {
             throw new ValidationException("User inexistent!");
         }
-        if(friendRepo.findOne(new Tuple<>(id1, id2)) != null){
+        Prietenie p = friendRepo.findOne(new Tuple<>(id1, id2));
+        if(p != null && p.getStatus() != 3){
             throw new ValidationException("Cerere de prietenie deja trimisa!");
+        }
+        else if(p!= null && p.getStatus() == 3)
+        {
+            friendRepo.delete(new Tuple(id1, id2));
         }
 
         prietenie.setId(tuple);
@@ -73,6 +79,7 @@ public class FriendshipService implements Observable {
         prietenie.setStatus(1);
 
         friendRepo.save(prietenie);
+        notifyObservers();
     }
 
     /**
@@ -91,6 +98,7 @@ public class FriendshipService implements Observable {
             throw new ValidationException("Prietenie inexistenta!");
         }
         friendRepo.delete(new Tuple(id1, id2));
+        notifyObservers();
     }
 
     /**
@@ -134,6 +142,7 @@ public class FriendshipService implements Observable {
         updated.setDate((java.sql.Date) new Date(currentDate.getYear() - 1900, currentDate.getMonthValue(), currentDate.getDayOfMonth()));
         updated.setStatus(answer);
         friendRepo.update(updated);
+        notifyObservers();
     }
 
     /**
@@ -150,6 +159,21 @@ public class FriendshipService implements Observable {
                         return true;
                     } else return false;
                 })
+                .map(x -> {
+                            if (x.getId().getRight() == id)
+                                return new Tuple<Utilizator, Date>(userRepo.findOne(x.getId().getLeft()), x.getDate());
+                            else
+                                return new Tuple<Utilizator, Date>(userRepo.findOne(x.getId().getRight()), x.getDate());
+                        }
+                )
+                .toList();
+
+        return rez;
+    }
+
+    private List<Tuple<Utilizator, Date>> translateFriendsToUsersWithDate(List<Prietenie> list, Long id)
+    {
+        List<Tuple<Utilizator, Date>> rez = list.stream()
                 .map(x -> {
                             if (x.getId().getRight() == id)
                                 return new Tuple<Utilizator, Date>(userRepo.findOne(x.getId().getLeft()), x.getDate());
@@ -206,19 +230,99 @@ public class FriendshipService implements Observable {
         return dfs.execute2();
     }
 
-    private int pageNumber = 0;
-    private int pageSize = 3;
-
-    public List<Prietenie> getNextFriends() {
-        this.pageNumber++;
-        return getFriendsOnPage(this.pageNumber);
+    public ProfilePage getProfilePage(Long userId, Long id)
+    {
+        Utilizator user = userRepo.findOne(id);
+        List<Tuple<Utilizator, Date>> friendsList = getFriends(id);
+        Prietenie p = friendRepo.findOne(new Tuple<>(userId, id));
+        int friendshipStatus = 0;
+        if(p == null) friendshipStatus = 0;
+        else if(p.getId().getLeft() == userId) friendshipStatus = p.getStatus();
+        else if(p.getId().getLeft() == id && p.getStatus() == 2) friendshipStatus = 2;
+        else if(p.getId().getLeft() == id && p.getStatus() == 1) friendshipStatus = 4;
+        else if(p.getId().getLeft() == id && p.getStatus() == 3) friendshipStatus = 5;
+        return new ProfilePage(user.getUsername(), user.getFirstName(), user.getLastName(), friendsList, friendshipStatus);
     }
 
-    public List<Prietenie> getFriendsOnPage(int page) {
-        this.pageNumber = page;
-        Pageable pageable = new PageableImplementation(page, this.pageSize);
-        Page<Prietenie> messagesPage = friendRepo.findAll(pageable);
-        return messagesPage.getContent().toList();
+    private int listPageNumber = 0;
+    private int listPageSize = 8;
+
+    public void setListPageSize(int pageSize)
+    {
+        this.listPageSize = pageSize;
+    }
+
+    public List<Tuple<Utilizator, Date>> getListNextFriends(Long id, int status)
+    {
+        this.listPageNumber++;
+        List<Tuple<Utilizator, Date>> rez = getFriendsOnListPageWithIdAndStatus(this.listPageNumber, id, status);
+        if(rez.size() > 0)
+        {
+            return rez;
+        }
+        this.listPageNumber--;
+        return null;
+    }
+
+    public List<Tuple<Utilizator, Date>> getListPreviousFriends(Long id, int status)
+    {
+        this.listPageNumber--;
+        List<Tuple<Utilizator, Date>> rez = getFriendsOnListPageWithIdAndStatus(this.listPageNumber, id, status);
+        if(rez.size() > 0)
+        {
+            return rez;
+        }
+        this.listPageNumber++;
+        return null;
+    }
+
+    public List<Tuple<Utilizator, Date>> getFriendsOnListPageWithIdAndStatus(int page, Long id, int status) {
+        this.listPageNumber = page;
+        Pageable pageable = new PageableImplementation(page, this.listPageSize);
+        Prietenie p = new Prietenie();
+        p.setId(new Tuple<>(id, null));
+        p.setStatus(status);
+        Page<Prietenie> friendsPage = friendRepo.findAllLike(pageable, p);
+        if(friendsPage == null) return null;
+        return translateFriendsToUsersWithDate(friendsPage.getContent().toList(), id);
+    }
+
+    private int pendingListPageNumber = 0;
+    private int pendingListPageSize = 14;
+
+    public List<Tuple<Utilizator, Date>> getPendingListNextFriends(Long id, int status)
+    {
+        this.pendingListPageNumber++;
+        List<Tuple<Utilizator, Date>> rez = getFriendsOnPendingListPageWithIdAndStatus(this.pendingListPageNumber, id, status);
+        if(rez.size() > 0)
+        {
+            return rez;
+        }
+        this.pendingListPageNumber--;
+        return null;
+    }
+
+    public List<Tuple<Utilizator, Date>> getPendingListPreviousFriends(Long id, int status)
+    {
+        this.pendingListPageNumber--;
+        List<Tuple<Utilizator, Date>> rez = getFriendsOnPendingListPageWithIdAndStatus(this.pendingListPageNumber, id, status);
+        if(rez.size() > 0)
+        {
+            return rez;
+        }
+        this.pendingListPageNumber++;
+        return null;
+    }
+
+    public List<Tuple<Utilizator, Date>> getFriendsOnPendingListPageWithIdAndStatus(int page, Long id, int status) {
+        this.pendingListPageNumber = page;
+        Pageable pageable = new PageableImplementation(page, this.pendingListPageSize);
+        Prietenie p = new Prietenie();
+        p.setId(new Tuple<>(id, null));
+        p.setStatus(status);
+        Page<Prietenie> friendsPage = friendRepo.findAllLike(pageable, p);
+        if(friendsPage == null) return null;
+        return translateFriendsToUsersWithDate(friendsPage.getContent().toList(), id);
     }
 
     private List<Observer> observers=new ArrayList<>();

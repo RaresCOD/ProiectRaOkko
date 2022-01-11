@@ -5,7 +5,7 @@ public class PageImplementation<T> implements Page<T> {
     private Pageable pageable;
     private Stream<T> content;
 
-    PageImplementation(Pageable pageable, Stream<T> content) {
+    public PageImplementation(Pageable pageable, Stream<T> content) {
         this.pageable = pageable;
         this.content = content;
     }
