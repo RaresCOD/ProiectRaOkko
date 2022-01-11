@@ -5,7 +5,6 @@
 <?import com.jfoenix.controls.JFXListView?>
 <?import com.jfoenix.controls.JFXSlider?>
 <?import com.jfoenix.controls.JFXTextArea?>
-<?import java.lang.String?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
@@ -82,7 +81,7 @@
       </AnchorPane>
       <AnchorPane fx:id="Chat" layoutX="20.0" layoutY="80.0" prefHeight="530.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
          <children>
-            <JFXTextArea fx:id="MsgText" labelFloat="true" layoutX="18.0" layoutY="471.0" prefHeight="45.0" prefWidth="321.0" promptText="Type..." style="-fx-background-radius: 100px; -fx-border-radius: 100px; -fx-background-color: #ffffff;" wrapText="true" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="18.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="471.0">
+            <JFXTextArea fx:id="MsgText" labelFloat="true" layoutX="18.0" layoutY="471.0" onKeyPressed="#onKeyPressedMsgText" prefHeight="45.0" prefWidth="321.0" promptText="Type..." style="-fx-background-radius: 100px; -fx-border-radius: 100px; -fx-background-color: #ffffff;" wrapText="true" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="18.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="471.0">
                <font>
                   <Font name="SansSerif Regular" size="15.0" />
                </font>

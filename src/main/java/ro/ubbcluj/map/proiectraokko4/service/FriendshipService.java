@@ -241,6 +241,7 @@ public class FriendshipService implements Observable {
         else if(p.getId().getLeft() == id && p.getStatus() == 2) friendshipStatus = 2;
         else if(p.getId().getLeft() == id && p.getStatus() == 1) friendshipStatus = 4;
         else if(p.getId().getLeft() == id && p.getStatus() == 3) friendshipStatus = 5;
+        System.out.println("friendship status " + friendshipStatus);
         return new ProfilePage(user.getUsername(), user.getFirstName(), user.getLastName(), friendsList, friendshipStatus);
     }
 
@@ -277,8 +278,8 @@ public class FriendshipService implements Observable {
     }
 
     public List<Tuple<Utilizator, Date>> getFriendsOnListPageWithIdAndStatus(int page, Long id, int status) {
-        this.listPageNumber = page;
-        Pageable pageable = new PageableImplementation(page, this.listPageSize);
+        if(page != -1) this.listPageNumber = page;
+        Pageable pageable = new PageableImplementation(this.listPageNumber, this.listPageSize);
         Prietenie p = new Prietenie();
         p.setId(new Tuple<>(id, null));
         p.setStatus(status);
@@ -315,8 +316,8 @@ public class FriendshipService implements Observable {
     }
 
     public List<Tuple<Utilizator, Date>> getFriendsOnPendingListPageWithIdAndStatus(int page, Long id, int status) {
-        this.pendingListPageNumber = page;
-        Pageable pageable = new PageableImplementation(page, this.pendingListPageSize);
+        if(page != -1) this.pendingListPageNumber = page;
+        Pageable pageable = new PageableImplementation(this.pendingListPageNumber, this.pendingListPageSize);
         Prietenie p = new Prietenie();
         p.setId(new Tuple<>(id, null));
         p.setStatus(status);

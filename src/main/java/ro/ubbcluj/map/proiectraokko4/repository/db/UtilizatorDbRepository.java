@@ -118,23 +118,43 @@ public class UtilizatorDbRepository implements PagingRepository<Long, Utilizator
     @Override
     public Utilizator save(Utilizator entity) {
 
-        String sql = "insert into users (id, username, first_name, last_name, password) values (?, ?, ?, ?, ?)";
+        String sql = "insert into users (username, first_name, last_name, password) values (?, ?, ?, ?)";
 
         try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
              PreparedStatement ps = connection.prepareStatement(sql)) {
 
 
-            ps.setLong(1, entity.getId());
-            ps.setString(2, entity.getUsername());
-            ps.setString(3, entity.getFirstName());
-            ps.setString(4, entity.getLastName());
-            ps.setString(5, entity.getPassword());
+            ps.setString(1, entity.getUsername());
+            ps.setString(2, entity.getFirstName());
+            ps.setString(3, entity.getLastName());
+            ps.setString(4, entity.getPassword());
 
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return entity;
+
+        //we query again the database to find out the allocated id
+        String sql2 = "select * from users where username = ?";
+
+        try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+             PreparedStatement ps = connection.prepareStatement(sql2)) {
+            ps.setString(1, entity.getUsername());
+            ResultSet result = ps.executeQuery();
+            while (result.next()) {
+                String firstName = result.getString("first_name");
+                String lastName = result.getString("last_name");
+                String username = result.getString("username");
+                String password1 = result.getString("password");
+                Long id = Long.valueOf(result.getInt("id"));
+                Utilizator utilizator = new Utilizator(username, firstName, lastName, password1);
+                utilizator.setId(id);
+                return utilizator;
+            }} catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+        return null;
     }
 
     @Override
@@ -205,8 +225,9 @@ public class UtilizatorDbRepository implements PagingRepository<Long, Utilizator
                 String firstName = resultSet.getString("first_name");
                 String lastName = resultSet.getString("last_name");
                 String username = resultSet.getString("username");
+                String password = resultSet.getString("password");
 
-                Utilizator utilizator = new Utilizator(username, firstName, lastName);
+                Utilizator utilizator = new Utilizator(username, firstName, lastName, password);
                 utilizator.setId(id);
                 users.add(utilizator);
             }
@@ -234,8 +255,9 @@ public class UtilizatorDbRepository implements PagingRepository<Long, Utilizator
                 String firstName = resultSet.getString("first_name");
                 String lastName = resultSet.getString("last_name");
                 String username = resultSet.getString("username");
+                String password = resultSet.getString("password");
 
-                Utilizator utilizator = new Utilizator(username, firstName, lastName);
+                Utilizator utilizator = new Utilizator(username, firstName, lastName, password);
                 utilizator.setId(id);
                 users.add(utilizator);
             }

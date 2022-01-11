@@ -15,8 +15,7 @@ import ro.ubbcluj.map.proiectraokko4.utils.observer.Observer;
 import ro.ubbcluj.map.proiectraokko4.utils.observer.TypeOfObservation;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class MessageService implements Observable {
 
@@ -41,6 +40,7 @@ public class MessageService implements Observable {
         } catch (ValidationException e) {
             System.out.println(e);
         }
+        notifyObservers();
     }
 
     public void addGroupMessage(Long id1, List<Long> Listid, String msg) {
@@ -60,15 +60,43 @@ public class MessageService implements Observable {
         } catch (ValidationException e) {
             System.out.println(e);
         }
+        notifyObservers();
+    }
+
+    public List<Message> getAllMessages(Long userId) {
+        Iterable<Message> all = messagesRepo.findAll();
+        List<Message> rez = new ArrayList<>();
+        for(Message curent:all) {
+            List<Utilizator> list = curent.getTo();
+            Boolean found = false;
+            if (curent.getFrom().getId() == userId) {
+                found = true;
+            }
+            for(Utilizator to:list) {
+                if(to.getId() == userId) {
+                    found = true;
+                }
+            }
+            if (found == true) {
+                rez.add(curent);
+            }
+        }
+        Collections.sort(rez, new Comparator<Message>() {
+            @Override
+            public int compare(Message m1, Message m2) {
+                return m1.getData().compareTo(m2.getData());
+            }
+        });
+        return rez;
     }
 
     public void showAllMessagesForThisUser(Long userId) {
         Iterable<Message> all = messagesRepo.findAll();
-        for (Message curent : all) {
+        for(Message curent:all) {
             List<Utilizator> list = curent.getTo();
             Boolean found = false;
-            for (Utilizator to : list) {
-                if (to.getId() == userId) {
+            for(Utilizator to:list) {
+                if(to.getId() == userId) {
                     found = true;
                 }
             }
@@ -81,7 +109,7 @@ public class MessageService implements Observable {
     public void showAllGroupChats(Long userId) {
         Iterable<Message> all = messagesRepo.findAll();
 
-        for (Message curent : all) {
+        for (Message curent: all) {
 
         }
     }
@@ -91,19 +119,73 @@ public class MessageService implements Observable {
         Message message = messagesRepo.findOne(msgId);
         List<Utilizator> to = new ArrayList<>();
         to.add(message.getFrom());
-        for (Utilizator curent : message.getTo()) {
-            if (curent.getId() != userId) {
+        for(Utilizator curent: message.getTo()) {
+            if(curent.getId() != userId) {
                 to.add(curent);
             }
         }
         Message newReply = new Message(from, to, msg);
         newReply.setReplyMsg(message);
         newReply.setData(LocalDateTime.now());
-        try {
+        try{
             messagesRepo.save(newReply);
         } catch (ValidationException e) {
             System.out.println(e);
         }
+        notifyObservers();
+    }
+
+    public static <T> boolean listEqualsIgnoreOrder(List<T> list1, List<T> list2) {
+        return new HashSet<>(list1).equals(new HashSet<>(list2));
+    }
+
+    public List<Message> findMsgs(Long userId, Long curentId) {
+        List<Message> allMsg = messagesRepo.findAll();
+        List<Utilizator> userList = new ArrayList<>();
+        userList.add(userRepo.findOne(userId));
+        userList.add(userRepo.findOne(curentId));
+        List<Message> rezultat = new ArrayList<>();
+        for(Message curent : allMsg) {
+            List<Utilizator> to = curent.getTo();
+            Utilizator from = curent.getFrom();
+            to.add(from);
+            if (listEqualsIgnoreOrder(to, userList) == true) {
+                rezultat.add(curent);
+            }
+        }
+        return rezultat;
+    }
+
+    public List<String> allChats(Long userId) {
+        List<Message> allMsg = messagesRepo.findAll();
+        List<List<Utilizator>> rez = new ArrayList<>();
+        List<String> rezBun = new ArrayList<>();
+        for(Message msg : allMsg) {
+            List<Utilizator> group = msg.getTo();
+            group.add(msg.getFrom());
+            boolean found = false;
+            for(Utilizator curent: group) {
+                if(curent.getId() == userId) {
+                    found = true;
+                }
+            }
+            for(List<Utilizator> curent: rez) {
+                if(listEqualsIgnoreOrder(curent, group) == true){
+                    found = false;
+                }
+            }
+            if(found == true) {
+                rez.add(group);
+                String grup = group.stream()
+                        .filter(x -> x.getId() != userId)
+                        .map(x -> x.getUsername())
+                        .reduce("", (u,v) -> u.concat(v + " "));
+
+                rezBun.add(grup);
+            }
+
+        }
+        return rezBun;
     }
 
     private int pageNumber = 0;

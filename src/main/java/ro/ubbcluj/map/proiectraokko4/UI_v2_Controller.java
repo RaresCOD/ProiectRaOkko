@@ -15,6 +15,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -28,6 +29,7 @@ import ro.ubbcluj.map.proiectraokko4.domain.Tuple;
 import ro.ubbcluj.map.proiectraokko4.domain.Utilizator;
 import ro.ubbcluj.map.proiectraokko4.service.FriendshipService;
 import ro.ubbcluj.map.proiectraokko4.service.MessageService;
+import ro.ubbcluj.map.proiectraokko4.service.RefreshThreadService;
 import ro.ubbcluj.map.proiectraokko4.service.UtilizatorService;
 import ro.ubbcluj.map.proiectraokko4.utils.observer.Observer;
 import ro.ubbcluj.map.proiectraokko4.utils.observer.TypeOfObservation;
@@ -46,6 +48,7 @@ public class UI_v2_Controller implements Observer {
     UtilizatorService userService;
     FriendshipService friendshipService;
     MessageService messageService;
+    RefreshThreadService refreshService;
     private Long UserId;
 
     ObservableList<String> ChatFriendsModel = FXCollections.observableArrayList();
@@ -88,6 +91,9 @@ public class UI_v2_Controller implements Observer {
         this.friendshipService = friendshipService;
         this.messageService = messageService;
         this.UserId = userId;
+        this.refreshService = new RefreshThreadService();
+        this.UM = userService.finduser(UserId).getUsername();
+        refreshService.addObserver(this);
         messageService.addObserver(this);
         friendshipService.addObserver(this);
         messageService.addObserver(this);
@@ -96,27 +102,43 @@ public class UI_v2_Controller implements Observer {
 
     private void load()
     {
+        List<Tuple<Utilizator, Date>> friends = friendshipService.getFriends(UserId);
         Utilizator user = userService.finduser(UserId);
         TextUsername.setText(user.getUsername());
 
-        initChatFriendsModel();
         initUsersModel(userService.getUsersOnPageWithUsername(0, SearchText.getText()));
         initFriendsModel(friendshipService.getFriendsOnListPageWithIdAndStatus(0 ,UserId, 2));
         initPendingFriendsModel(friendshipService.getFriendsOnPendingListPageWithIdAndStatus(0, UserId, 1));
+        initChatFriendsModel();
+        initChatMsgModel();
 
-        List<Message> allMsgs = userService.getAllMessages(UserId);
-
-        modelChatMsg.setAll(allMsgs);
-        SearchUsers.textProperty().addListener(x -> handleUsersFilter());
+        //SearchUsers.textProperty().addListener(x -> handleUsersFilter());
         Username.setText(UM);
-        Chats.setText(String.valueOf(userService.allChats(UserId).size()));
-        Friends.setText(String.valueOf(userService.getFriends(UserId).size()));
+        Chats.setText(String.valueOf(messageService.allChats(UserId).size()));
+        Friends.setText(String.valueOf(friendshipService.getFriends(UserId).size()));
+        refreshService.start();
     }
 
     private void initChatFriendsModel()
     {
-        List<String> fList = userService.allChats(UserId);
-        ChatFriendsModel.setAll(fList);
+        /*List<String> fList = messageService.allChats(UserId);
+        System.out.println("dadada " + fList.size());
+        fList.forEach(System.out::println);
+        ChatFriendsModel.setAll(fList);*/
+        List<Tuple<Utilizator, Date>> list = friendshipService.getFriends(UserId);
+        if(list == null) return;
+        //list.removeIf(x -> x.getUsername().equals(TextUsername.getText()));
+        List<String> uList = StreamSupport.stream(list.spliterator(), false)
+                .filter(x -> !x.getLeft().getUsername().equals(TextUsername.getText()))
+                .map(x -> x.getLeft().getUsername())
+                .collect(Collectors.toList());
+        ChatFriendsModel.setAll(uList);
+    }
+
+    private void initChatMsgModel()
+    {
+        List<Message> allMsgs = messageService.getAllMessages(UserId);
+        modelChatMsg.setAll(allMsgs);
     }
 
     private void initUsersModel(List<Utilizator> list)
@@ -169,12 +191,23 @@ public class UI_v2_Controller implements Observer {
         ProfilePageAnchor.setVisible(false);
     }
 
+    private void startChat() {
+        Chat.setVisible(true);
+        SearchPage.setVisible(false);
+        ChatPage.setVisible(false);
+        HomePage.setVisible(false);
+        EditPage.setVisible(false);
+        FriendsPage.setVisible(false);
+        ProfilePageAnchor.setVisible(false);
+    }
+
     public void initialize() {
 //        ChatList.setItems(model);
 //        ChatList.getItems().add(new Utilizator("a","a", "a"));
         initHomePage();
-        ChatList.setItems(ChatFriendsModel);
 
+
+        ChatList.setItems(ChatFriendsModel);
         ChatMsg.setItems(modelChatMsg);
         ChatMsg.setCellFactory(x -> new ListCell<Message>() {
             protected void updateItem(Message item, boolean empty) {
@@ -182,16 +215,26 @@ public class UI_v2_Controller implements Observer {
                 setText(empty || item == null ? "" : item.getFrom().getUsername().concat(": " + item.getMsg()));
             }
         });
-
         SearchList.setItems(UsersModel);
         FriendsList.setItems(FriendsModel);
         PendingFriendsList.setItems(PendingFriendsModel);
         ProfilePageFriendsList.setItems(ProfilePageFriendsModel);
 
         //SearchList.setExpanded(true);
-        //SearchList.depthProperty().set(1);
+        SearchList.depthProperty().set(1);
+        //PendingFriendsList.setExpanded(true);
+        PendingFriendsList.depthProperty().set(1);
+        //FriendsList.setExpanded(true);
+        FriendsList.depthProperty().set(1);
     }
 
+    public void onKeyPressedMsgText(KeyEvent event)
+    {
+        if(event.getCode().equals(KeyCode.ENTER))
+        {
+            handleSendMessage(null);
+        }
+    }
 
     public void handleButtonAction(javafx.scene.input.MouseEvent mouseEvent) {
         if(mouseEvent.getTarget() == SearchImg) {
@@ -230,25 +273,6 @@ public class UI_v2_Controller implements Observer {
         }
     }
 
-
-//    public void handleLoginButton(ActionEvent actionEvent) {
-//        String userName = username.getText();
-//        Long id = service.Login(userName);
-//        if( id != null) {
-//            HomePage.setVisible(true);
-//            ChatPage.setVisible(false);
-//            SearchPage.setVisible(false);
-//            LoginPage.setVisible(false);
-//            EditPage.setVisible(false);
-//            FriendsPage.setVisible(false);
-//            TextUsername.setText(userName);
-//            UserId = id;
-//            load();
-//        } else {
-//            errorText.setText("Username or password is invalid");
-//        }
-//    }
-
     public void handleFriendRequests(MouseEvent mouseEvent) {
         FriendsPage.setVisible(true);
         EditPage.setVisible(false);
@@ -271,7 +295,7 @@ public class UI_v2_Controller implements Observer {
 
     public void doThis(MouseEvent mouseEvent) {
         String currentSelection = ChatList.getSelectionModel().getSelectedItem();
-
+        if(currentSelection == null) return;
         startChat();
         friends.clear();
         List<String> friendsNou = new ArrayList<>(List.of(currentSelection.split(" ")));
@@ -299,40 +323,27 @@ public class UI_v2_Controller implements Observer {
             return false;
         };
 
-        modelChatMsg.setAll(userService.getAllMessages(UserId)
+        modelChatMsg.setAll(messageService.getAllMessages(UserId)
                 .stream()
                 .filter(p1)
                 .collect(Collectors.toList()));
-    }
-
-    private void handleUsersFilter() {
-        Predicate<Utilizator> p = x -> x.getUsername().startsWith(SearchUsers.getText());
-        Iterable<Utilizator> users = userService.getAll();
-        List<Utilizator> uList = StreamSupport.stream(users.spliterator(), false)
-                .filter(p)
-                .collect(Collectors.toList());
-        modelUsers.setAll(uList);
     }
 
     public void handleSendMessage(MouseEvent mouseEvent) {
         String msg = MsgText.getText();
         Long FriendId = userService.getUserId(friendUM);
         if(friends.size() == 1) {
-            userService.addMessage(UserId, FriendId, msg);
+            messageService.addMessage(UserId, FriendId, msg);
         } else {
             List<Long> to = new ArrayList<>();
             for(String curent:friends) {
                 if(!curent.equals(UM))
                     to.add(userService.getUserId(curent));
             }
-            userService.addGroupMessage(UserId, to, msg);
+            messageService.addGroupMessage(UserId, to, msg);
         }
 
         MsgText.clear();
-    }
-
-    public void handleGoBack(MouseEvent mouseEvent) {
-
     }
 
     public void onKeyTypedSearchText(KeyEvent event)
@@ -400,8 +411,8 @@ public class UI_v2_Controller implements Observer {
         ChatPage.setVisible(false);
         HomePage.setVisible(false);
         ProfilePageAnchor.setVisible(true);
-        ProfilePageRejectFriendButton.setVisible(false);
-        ProfilePageAddFriendButton.setLayoutY(119);
+        //ProfilePageRejectFriendButton.setVisible(false);
+        //ProfilePageAddFriendButton.setLayoutY(119);
 
         ProfilePage page = friendshipService.getProfilePage(UserId, userService.getUserId(username));
         //friendshipService.setPageSize(8);
@@ -426,6 +437,8 @@ public class UI_v2_Controller implements Observer {
                 break;
             case 2:
                 ProfilePageAddFriendButton.setText("Unfriend");
+                ProfilePageRejectFriendButton.setVisible(false);
+                ProfilePageAddFriendButton.setLayoutY(119);
                 ProfilePageAddFriendButton.setDisable(false);
                 break;
             case 3:
@@ -481,11 +494,20 @@ public class UI_v2_Controller implements Observer {
                     loadProfilePage(Username.getText());
                 }
 
-                initFriendsModel(friendshipService.getFriendsOnListPageWithIdAndStatus(0, UserId, 2));
-                initPendingFriendsModel(friendshipService.getFriendsOnPendingListPageWithIdAndStatus(0, UserId, 1));
+                initFriendsModel(friendshipService.getFriendsOnListPageWithIdAndStatus(-1, UserId, 2));
+                initPendingFriendsModel(friendshipService.getFriendsOnPendingListPageWithIdAndStatus(-1, UserId, 1));
 
                 break;
             case MESSAGE:
+                if(Chat.isVisible()) initChatMsgModel();
+                if(ChatPage.isVisible()) initChatFriendsModel();
+                break;
+            case REFRESH:
+                if(Chat.isVisible()) initChatMsgModel();
+                if(ChatPage.isVisible()) initChatFriendsModel();
+                if(FriendsPage.isVisible()) { initFriendsModel(friendshipService.getFriendsOnListPageWithIdAndStatus(-1, UserId, 2)); initPendingFriendsModel(friendshipService.getFriendsOnPendingListPageWithIdAndStatus(-1, UserId, 1)); }
+                if(ProfilePageAnchor.isVisible()) loadProfilePage(Username.getText());
+                if(SearchPage.isVisible()) initUsersModel(userService.getUsersOnPageWithUsername(-1, SearchText.getText()));
                 break;
         }
     }

@@ -1,5 +1,5 @@
 package ro.ubbcluj.map.proiectraokko4.utils.observer;
 
 public enum TypeOfObservation {
-    USER, FRIENDSHIP, MESSAGE;
+    USER, FRIENDSHIP, MESSAGE, REFRESH;
 }

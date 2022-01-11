@@ -46,6 +46,9 @@ public class HelloApplication extends Application {
         friendshipService = new FriendshipService(repoDb, repoFDb);
         messageService = new MessageService(repoDb, repoMsgDb);
 
+        //System.out.println("dadada " + repoMsgDb.findAll().size());
+        //repoMsgDb.findAll().forEach(System.out::println);
+
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("views/login_v2.fxml"));
         AnchorPane rootLayout = (AnchorPane)fxmlLoader.load();
         LoginController_v2 loginController = fxmlLoader.getController();

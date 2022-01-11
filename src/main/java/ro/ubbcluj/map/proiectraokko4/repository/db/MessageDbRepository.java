@@ -174,10 +174,9 @@ public class MessageDbRepository implements PagingRepository<Long, Message> {
             } else {
                 ps.setInt(4, Math.toIntExact(entity.getReplyMsg().getId()));
             }
-            ps.setDate(5, Date.valueOf(entity.getData().toLocalDate()));
+            ps.setTimestamp(5, Timestamp.valueOf(entity.getData()));
 
             ps.executeUpdate();
-//            ps.setDate(4, java.sql.Date.valueOf(entity.getData().toLocalDate()));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -216,7 +215,7 @@ public class MessageDbRepository implements PagingRepository<Long, Message> {
 
                 PreparedStatement ps1 = connection.prepareStatement(sql1);
                 ResultSet resultSet1 = ps1.executeQuery();
-                Utilizator utilizator = new Utilizator("a","a","a");
+                Utilizator utilizator = new Utilizator("a","a","a", "a");
                 while (resultSet1.next()) {
                     String firstName = resultSet1.getString("first_name");
                     String lastName = resultSet1.getString("last_name");
@@ -240,7 +239,8 @@ public class MessageDbRepository implements PagingRepository<Long, Message> {
                         String firstName1 = resultSet2.getString("first_name");
                         String lastName1 = resultSet2.getString("last_name");
                         String username1 = resultSet2.getString("username");
-                        Utilizator utilizator1 = new Utilizator(username1, firstName1, lastName1);
+                        String password1 = resultSet2.getString("password");
+                        Utilizator utilizator1 = new Utilizator(username1, firstName1, lastName1, password1);
                         utilizator1.setId(Long.valueOf(curent));
                         list.add(utilizator1);
                     }

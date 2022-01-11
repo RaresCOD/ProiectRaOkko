@@ -23,6 +23,7 @@ import ro.ubbcluj.map.proiectraokko4.domain.validators.ValidationException;
 import ro.ubbcluj.map.proiectraokko4.service.FriendshipService;
 import ro.ubbcluj.map.proiectraokko4.service.MessageService;
 import ro.ubbcluj.map.proiectraokko4.service.UtilizatorService;
+import ro.ubbcluj.map.proiectraokko4.utils.Crypt;
 
 import java.io.IOException;
 
@@ -124,7 +125,7 @@ public class LoginController_v2 {
 
     public void changeValue1(KeyEvent keyEvent) {
         String ch = keyEvent.getCharacter();
-        if(keyEvent.getCode() == KeyCode.BACK_SPACE) {
+        if(keyEvent.getCode().equals(KeyCode.BACK_SPACE)) {
             if(passReg.length()>0) {
                 StringBuffer sb= new StringBuffer(passReg);
                 sb.deleteCharAt(sb.length()-1);
