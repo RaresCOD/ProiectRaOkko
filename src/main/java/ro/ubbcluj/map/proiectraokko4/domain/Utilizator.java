@@ -21,16 +21,22 @@ public class Utilizator extends Entity<Long>{
      * friends
      */
     private List<Utilizator> friends = new ArrayList<Utilizator>();
+    private String password;
+
+    public String getPassword() {
+        return password;
+    }
 
     /**
      * constructor
      * @param firstName fn
      * @param lastName ln
      */
-    public Utilizator(String username, String firstName, String lastName) {
+    public Utilizator(String username, String firstName, String lastName, String password) {
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.password = password;
     }
 
     /**

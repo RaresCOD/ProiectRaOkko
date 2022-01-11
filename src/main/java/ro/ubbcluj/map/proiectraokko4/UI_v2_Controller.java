@@ -3,6 +3,7 @@ package ro.ubbcluj.map.proiectraokko4;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXListCell;
 import com.jfoenix.controls.JFXListView;
+import com.jfoenix.controls.JFXTextArea;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -20,6 +21,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import ro.ubbcluj.map.proiectraokko4.Message.Message;
 import ro.ubbcluj.map.proiectraokko4.domain.Prietenie;
 import ro.ubbcluj.map.proiectraokko4.domain.ProfilePage;
 import ro.ubbcluj.map.proiectraokko4.domain.Tuple;
@@ -32,7 +34,10 @@ import ro.ubbcluj.map.proiectraokko4.utils.observer.TypeOfObservation;
 
 import java.io.IOException;
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -49,14 +54,24 @@ public class UI_v2_Controller implements Observer {
     ObservableList<String> PendingFriendsModel = FXCollections.observableArrayList();
     ObservableList<String> FriendsModel = FXCollections.observableArrayList();
 
+    //
+    ObservableList<Message> modelChatMsg = FXCollections.observableArrayList();
+    private String friendUM, UM;
+    private List<String> friends = new ArrayList<>();
+    //
+
     @FXML
     private ImageView SearchImg, HomeImg, ChatImg, FriendsImg;
     @FXML
-    private Text TextUsername, ProfilePageUsername, ProfilePageName;
+    private Text TextUsername, test, Username, ProfilePageName, Chats, Friends;
     @FXML
-    private AnchorPane SearchPage, HomePage, ChatPage, EditPage, BottomBar, TopBar, FriendsPage, ProfilePageAnchor;
+    private JFXTextArea MsgText, SearchUsers;
+    @FXML
+    private AnchorPane SearchPage, HomePage, ChatPage, EditPage, BottomBar, TopBar, FriendsPage, Chat, ProfilePageAnchor;
     @FXML
     private JFXListView<String> SearchList, ChatList;
+    @FXML
+    private JFXListView<Message> ChatMsg;
     @FXML
     private JFXListView<String> FriendsList, PendingFriendsList;
     @FXML
@@ -88,15 +103,20 @@ public class UI_v2_Controller implements Observer {
         initUsersModel(userService.getUsersOnPageWithUsername(0, SearchText.getText()));
         initFriendsModel(friendshipService.getFriendsOnListPageWithIdAndStatus(0 ,UserId, 2));
         initPendingFriendsModel(friendshipService.getFriendsOnPendingListPageWithIdAndStatus(0, UserId, 1));
+
+        List<Message> allMsgs = userService.getAllMessages(UserId);
+
+        modelChatMsg.setAll(allMsgs);
+        SearchUsers.textProperty().addListener(x -> handleUsersFilter());
+        Username.setText(UM);
+        Chats.setText(String.valueOf(userService.allChats(UserId).size()));
+        Friends.setText(String.valueOf(userService.getFriends(UserId).size()));
     }
 
     private void initChatFriendsModel()
     {
-        List<Tuple<Utilizator, Date>> friends = friendshipService.getFriends(UserId);
-        List<String> fList = friends.stream()
-                .map(x -> x.getLeft().getUsername())
-                .collect(Collectors.toList());
-        FriendsModel.setAll(fList);
+        List<String> fList = userService.allChats(UserId);
+        ChatFriendsModel.setAll(fList);
     }
 
     private void initUsersModel(List<Utilizator> list)
@@ -139,6 +159,7 @@ public class UI_v2_Controller implements Observer {
 
     private void initHomePage() {
         HomePage.setVisible(true);
+        Chat.setVisible(false);
         TopBar.setVisible(true);
         BottomBar.setVisible(true);
         ChatPage.setVisible(false);
@@ -153,10 +174,22 @@ public class UI_v2_Controller implements Observer {
 //        ChatList.getItems().add(new Utilizator("a","a", "a"));
         initHomePage();
         ChatList.setItems(ChatFriendsModel);
+
+        ChatMsg.setItems(modelChatMsg);
+        ChatMsg.setCellFactory(x -> new ListCell<Message>() {
+            protected void updateItem(Message item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? "" : item.getFrom().getUsername().concat(": " + item.getMsg()));
+            }
+        });
+
         SearchList.setItems(UsersModel);
         FriendsList.setItems(FriendsModel);
         PendingFriendsList.setItems(PendingFriendsModel);
         ProfilePageFriendsList.setItems(ProfilePageFriendsModel);
+
+        //SearchList.setExpanded(true);
+        //SearchList.depthProperty().set(1);
     }
 
 
@@ -167,6 +200,7 @@ public class UI_v2_Controller implements Observer {
             HomePage.setVisible(false);
             EditPage.setVisible(false);
             FriendsPage.setVisible(false);
+            Chat.setVisible(false);
             ProfilePageAnchor.setVisible(false);
         } else if (mouseEvent.getTarget() == HomeImg) {
             HomePage.setVisible(true);
@@ -174,6 +208,7 @@ public class UI_v2_Controller implements Observer {
             SearchPage.setVisible(false);
             EditPage.setVisible(false);
             FriendsPage.setVisible(false);
+            Chat.setVisible(false);
             ProfilePageAnchor.setVisible(false);
         } else if (mouseEvent.getTarget() == ChatImg) {
             ChatPage.setVisible(true);
@@ -181,6 +216,7 @@ public class UI_v2_Controller implements Observer {
             SearchPage.setVisible(false);
             EditPage.setVisible(false);
             FriendsPage.setVisible(false);
+            Chat.setVisible(false);
             ProfilePageAnchor.setVisible(false);
         }
         else if(mouseEvent.getTarget() == FriendsImg) {
@@ -189,6 +225,7 @@ public class UI_v2_Controller implements Observer {
             SearchPage.setVisible(false);
             EditPage.setVisible(false);
             FriendsPage.setVisible(true);
+            Chat.setVisible(false);
             ProfilePageAnchor.setVisible(false);
         }
     }
@@ -218,6 +255,7 @@ public class UI_v2_Controller implements Observer {
         SearchPage.setVisible(false);
         ChatPage.setVisible(false);
         HomePage.setVisible(false);
+        Chat.setVisible(false);
         ProfilePageAnchor.setVisible(false);
     }
 
@@ -227,7 +265,70 @@ public class UI_v2_Controller implements Observer {
         ChatPage.setVisible(false);
         HomePage.setVisible(false);
         FriendsPage.setVisible(false);
+        Chat.setVisible(false);
         ProfilePageAnchor.setVisible(false);
+    }
+
+    public void doThis(MouseEvent mouseEvent) {
+        String currentSelection = ChatList.getSelectionModel().getSelectedItem();
+
+        startChat();
+        friends.clear();
+        List<String> friendsNou = new ArrayList<>(List.of(currentSelection.split(" ")));
+        friends.addAll(friendsNou);
+        System.out.println(friends);
+        friends.add(UM);
+        handleChatFilter();
+    }
+
+    public static <T> boolean listEqualsIgnoreOrder(List<T> list1, List<T> list2) {
+        return new HashSet<>(list1).equals(new HashSet<>(list2));
+    }
+
+    private void handleChatFilter() {
+        Predicate<Message> p1 = x -> {
+            String username = x.getFrom().getUsername();
+            List<Utilizator> to = x.getTo();
+            List<String> grup = to.stream()
+                    .map(Utilizator::getUsername)
+                    .collect(Collectors.toList());
+            grup.add(username);
+            if(listEqualsIgnoreOrder(grup, friends)) {
+                return  true;
+            }
+            return false;
+        };
+
+        modelChatMsg.setAll(userService.getAllMessages(UserId)
+                .stream()
+                .filter(p1)
+                .collect(Collectors.toList()));
+    }
+
+    private void handleUsersFilter() {
+        Predicate<Utilizator> p = x -> x.getUsername().startsWith(SearchUsers.getText());
+        Iterable<Utilizator> users = userService.getAll();
+        List<Utilizator> uList = StreamSupport.stream(users.spliterator(), false)
+                .filter(p)
+                .collect(Collectors.toList());
+        modelUsers.setAll(uList);
+    }
+
+    public void handleSendMessage(MouseEvent mouseEvent) {
+        String msg = MsgText.getText();
+        Long FriendId = userService.getUserId(friendUM);
+        if(friends.size() == 1) {
+            userService.addMessage(UserId, FriendId, msg);
+        } else {
+            List<Long> to = new ArrayList<>();
+            for(String curent:friends) {
+                if(!curent.equals(UM))
+                    to.add(userService.getUserId(curent));
+            }
+            userService.addGroupMessage(UserId, to, msg);
+        }
+
+        MsgText.clear();
     }
 
     public void handleGoBack(MouseEvent mouseEvent) {
@@ -306,7 +407,7 @@ public class UI_v2_Controller implements Observer {
         //friendshipService.setPageSize(8);
 
         ProfilePageName.setText(page.getFirstName() + " " + page.getLastName());
-        ProfilePageUsername.setText(page.getUsername());
+        Username.setText(page.getUsername());
         initProfilePageFriendsModel(page.getFriends());
 
         switch(page.getFriendshipStatus())
@@ -345,17 +446,17 @@ public class UI_v2_Controller implements Observer {
     {
         if(ProfilePageAddFriendButton.getText().equals("Add Friend"))
         {
-            friendshipService.addFriend(UserId, userService.getUserId(ProfilePageUsername.getText()));
+            friendshipService.addFriend(UserId, userService.getUserId(Username.getText()));
         }
         else if(ProfilePageAddFriendButton.getText().equals("Unfriend"))
         {
-            friendshipService.deleteFriend(UserId, userService.getUserId(ProfilePageUsername.getText()));
+            friendshipService.deleteFriend(UserId, userService.getUserId(Username.getText()));
         }
         else if(ProfilePageAddFriendButton.getText().equals("Accept"))
         {
             ProfilePageRejectFriendButton.setVisible(false);
             ProfilePageAddFriendButton.setLayoutY(119);
-            friendshipService.answerFriendRequest(UserId, userService.getUserId(ProfilePageUsername.getText()), 2);
+            friendshipService.answerFriendRequest(UserId, userService.getUserId(Username.getText()), 2);
         }
     }
 
@@ -364,9 +465,9 @@ public class UI_v2_Controller implements Observer {
         ProfilePageRejectFriendButton.setVisible(false);
         ProfilePageAddFriendButton.setLayoutY(119);
         if(ProfilePageRejectFriendButton.getText().equals("Reject"))
-            friendshipService.answerFriendRequest(UserId, userService.getUserId(ProfilePageUsername.getText()), 3);
+            friendshipService.answerFriendRequest(UserId, userService.getUserId(Username.getText()), 3);
         else if(ProfilePageRejectFriendButton.getText().equals("Cancel"))
-            friendshipService.deleteFriend(UserId, userService.getUserId(ProfilePageUsername.getText()));
+            friendshipService.deleteFriend(UserId, userService.getUserId(Username.getText()));
     }
 
     @Override
@@ -377,7 +478,7 @@ public class UI_v2_Controller implements Observer {
                 break;
             case FRIENDSHIP:
                 if (ProfilePageAnchor.isVisible()) {
-                    loadProfilePage(ProfilePageUsername.getText());
+                    loadProfilePage(Username.getText());
                 }
 
                 initFriendsModel(friendshipService.getFriendsOnListPageWithIdAndStatus(0, UserId, 2));

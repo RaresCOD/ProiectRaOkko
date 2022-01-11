@@ -43,7 +43,8 @@ public class UtilizatorDbRepository implements PagingRepository<Long, Utilizator
                String firstName = result.getString("first_name");
                String lastName = result.getString("last_name");
                String username = result.getString("username");
-               Utilizator utilizator = new Utilizator(username, firstName, lastName);
+               String password1 = result.getString("password");
+               Utilizator utilizator = new Utilizator(username, firstName, lastName, password1);
                utilizator.setId(id);
                String sql1 = "select friendship.id2, friendship.id1\n" +
                        "from users\n" +
@@ -72,7 +73,8 @@ public class UtilizatorDbRepository implements PagingRepository<Long, Utilizator
                                String firstName2 = resultSet1.getString("first_name");
                                String lastName2 = resultSet1.getString("last_name");
                                String username2 = resultSet1.getString("username");
-                               Utilizator utilizator1 = new Utilizator(username2, firstName2, lastName2);
+                               String password2 = resultSet1.getString("password");
+                               Utilizator utilizator1 = new Utilizator(username2, firstName2, lastName2, password2);
                                utilizator1.setId(idBun);
                                utilizator.addFriend(utilizator1);
                                }
@@ -100,8 +102,9 @@ public class UtilizatorDbRepository implements PagingRepository<Long, Utilizator
                 String firstName = resultSet.getString("first_name");
                 String lastName = resultSet.getString("last_name");
                 String username = resultSet.getString("username");
+                String password = resultSet.getString("password");
 
-                Utilizator utilizator = new Utilizator(username, firstName, lastName);
+                Utilizator utilizator = new Utilizator(username, firstName, lastName, password);
                 utilizator.setId(id);
                 users.add(utilizator);
             }
@@ -115,20 +118,23 @@ public class UtilizatorDbRepository implements PagingRepository<Long, Utilizator
     @Override
     public Utilizator save(Utilizator entity) {
 
-        String sql = "insert into users (username, first_name, last_name) values (?, ?, ?)";
+        String sql = "insert into users (id, username, first_name, last_name, password) values (?, ?, ?, ?, ?)";
 
         try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
              PreparedStatement ps = connection.prepareStatement(sql)) {
 
-            ps.setString(1, entity.getUsername());
-            ps.setString(2, entity.getFirstName());
-            ps.setString(3, entity.getLastName());
+
+            ps.setLong(1, entity.getId());
+            ps.setString(2, entity.getUsername());
+            ps.setString(3, entity.getFirstName());
+            ps.setString(4, entity.getLastName());
+            ps.setString(5, entity.getPassword());
 
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return entity;
     }
 
     @Override
