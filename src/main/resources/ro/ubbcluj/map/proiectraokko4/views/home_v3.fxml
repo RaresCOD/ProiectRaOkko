@@ -5,7 +5,10 @@
 <?import com.jfoenix.controls.JFXListView?>
 <?import com.jfoenix.controls.JFXSlider?>
 <?import com.jfoenix.controls.JFXTextArea?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -75,7 +78,7 @@
                   <Image url="@../images/icons8_less_than_60px.png" />
                </image>
             </ImageView>
-            <ImageView layoutX="340.0" layoutY="15.0" onMousePressed="#handleFriendRequests">
+            <ImageView fx:id="FriendsImg" layoutX="340.0" layoutY="15.0" onMousePressed="#handleFriendRequests">
                <image>
                   <Image url="@../images/icons8_team_30px_1.png" />
                </image>
@@ -91,15 +94,112 @@
             <JFXListView fx:id="ChatList" layoutX="8.0" layoutY="14.0" prefHeight="513.0" prefWidth="383.0" style="-fx-background-color: #b3b3ff;" />
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="FriendRequestPage" layoutX="10.0" layoutY="70.0" prefHeight="530.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
+      <AnchorPane fx:id="FriendsPage" layoutX="10.0" layoutY="70.0" prefHeight="530.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
          <children>
-            <JFXListView fx:id="FRList" layoutX="14.0" layoutY="14.0" prefHeight="503.0" prefWidth="370.0" style="-fx-background-color: #b3b3ff;" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0" />
+            <JFXListView fx:id="FriendsList" layoutX="35.0" layoutY="250.0" onMouseClicked="#onMouseClickedFriendsList" prefHeight="209.0" prefWidth="329.0" style="-fx-background-color: #b3b3ff;" />
+            <ImageView fitHeight="30.0" fitWidth="30.0" layoutX="35.0" layoutY="471.0" onMouseClicked="#onMouseClickedPreviousPageFriends">
+               <image>
+                  <Image url="@../images/backward-arrow.png" />
+               </image>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </ImageView>
+            <ImageView fitHeight="30.0" fitWidth="30.0" layoutX="334.0" layoutY="471.0" onMouseClicked="#onMouseClickedNextPageFriends">
+               <image>
+                  <Image url="@../images/forward-arrow.png" />
+               </image>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </ImageView>
+            <Text fill="#6b6a6a" layoutX="106.0" layoutY="243.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Friends" textAlignment="CENTER" wrappingWidth="191.0">
+               <font>
+                  <Font name="SansSerif Regular" size="17.0" />
+               </font>
+            </Text>
+            <JFXListView fx:id="PendingFriendsList" layoutX="37.0" layoutY="36.0" onMouseClicked="#onMouseClickedPendingFriendsList" prefHeight="157.0" prefWidth="329.0" style="-fx-background-color: #b3b3ff;" />
+            <ImageView fitHeight="30.0" fitWidth="30.0" layoutX="37.0" layoutY="193.0" onMouseClicked="#onMouseClickedPreviousPagePendingFriends">
+               <image>
+                  <Image url="@../images/backward-arrow.png" />
+               </image>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </ImageView>
+            <ImageView fitHeight="30.0" fitWidth="30.0" layoutX="336.0" layoutY="193.0" onMouseClicked="#onMouseClickedNextPagePendingFriends">
+               <image>
+                  <Image url="@../images/forward-arrow.png" />
+               </image>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </ImageView>
+            <Text fill="#6b6a6a" layoutX="76.0" layoutY="29.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Pending Friend Requests" textAlignment="CENTER" wrappingWidth="251.0">
+               <font>
+                  <Font name="SansSerif Regular" size="17.0" />
+               </font>
+            </Text>
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="SearchPage" layoutX="10.0" layoutY="70.0" prefHeight="530.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
+      <AnchorPane fx:id="SearchPage" layoutX="10.0" layoutY="70.0" prefHeight="530.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" visible="false" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
          <children>
-            <JFXTextArea focusColor="#5d84f8" labelFloat="true" layoutX="27.0" layoutY="14.0" prefHeight="104.0" prefWidth="339.0" promptText="Search" style="-fx-border-radius: 10px; -jfx-focus-color: #33cc33;" unFocusColor="#abafee" AnchorPane.bottomAnchor="465.0" AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="20.0" />
-            <JFXListView fx:id="SearchList" layoutX="36.0" layoutY="81.0" prefHeight="436.0" prefWidth="330.0" style="-fx-background-color: #b3b3ff;" AnchorPane.leftAnchor="35.0" AnchorPane.rightAnchor="35.0" />
+            <JFXTextArea fx:id="SearchText" focusColor="#5d84f8" labelFloat="true" layoutX="300.0" layoutY="14.0" onKeyTyped="#onKeyTypedSearchText" prefHeight="38.0" prefWidth="339.0" promptText="Search" style="-fx-border-radius: 10px;" unFocusColor="#abafee" AnchorPane.bottomAnchor="472.0" AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="20.0">
+               <font>
+                  <Font size="18.0" />
+               </font></JFXTextArea>
+            <JFXListView fx:id="SearchList" layoutX="36.0" layoutY="81.0" onMouseClicked="#onMouseClickedSearchList" prefHeight="407.0" prefWidth="329.0" style="-fx-background-color: #b3b3ff;" AnchorPane.leftAnchor="35.0" AnchorPane.rightAnchor="35.0" />
+            <ImageView fitHeight="30.0" fitWidth="30.0" layoutX="30.0" layoutY="488.0" onMouseClicked="#onMouseClickedPreviousPageSearchPage">
+               <image>
+                  <Image url="@../images/backward-arrow.png" />
+               </image>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </ImageView>
+            <ImageView fitHeight="30.0" fitWidth="30.0" layoutX="339.0" layoutY="488.0" onMouseClicked="#onMouseClickedNextPageSearchPage">
+               <image>
+                  <Image url="@../images/forward-arrow.png" />
+               </image>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </ImageView>
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="ProfilePageAnchor" prefHeight="530.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" visible="false" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
+         <children>
+            <Button fx:id="ProfilePageAddFriendButton" layoutX="290.0" layoutY="119.0" mnemonicParsing="false" onMouseClicked="#onProfilePageAddFriendButtonClicked" prefWidth="75.0" text="Add Friend">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <ImageView layoutX="147.0" layoutY="79.0">
+               <image>
+                  <Image url="@../images/icons8_male_user_104px.png" />
+               </image>
+            </ImageView>
+            <ListView fx:id="ProfilePageFriendsList" layoutX="21.0" layoutY="213.0" prefHeight="303.0" prefWidth="191.0" />
+            <Text fx:id="ProfilePageName" fill="#6b6a6a" layoutX="16.0" layoutY="31.0" strokeType="OUTSIDE" strokeWidth="0.0" text="First + Last Name" textAlignment="CENTER" wrappingWidth="369.0">
+               <font>
+                  <Font name="SansSerif Regular" size="27.0" />
+               </font>
+            </Text>
+            <Text fx:id="ProfilePageUsername" fill="#6b6a6a" layoutX="116.0" layoutY="62.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Username" textAlignment="CENTER" wrappingWidth="166.9830722808838">
+               <font>
+                  <Font name="SansSerif Bold" size="20.0" />
+               </font>
+            </Text>
+            <Text fill="#6b6a6a" layoutX="21.0" layoutY="206.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Friends" textAlignment="CENTER" wrappingWidth="191.0">
+               <font>
+                  <Font name="SansSerif Regular" size="17.0" />
+               </font>
+            </Text>
+            <Button fx:id="ProfilePageRejectFriendButton" layoutX="290.0" layoutY="138.0" mnemonicParsing="false" onMouseClicked="#onProfilePageRejectFriendButtonClicked" prefHeight="25.0" prefWidth="75.0" text="Reject" visible="false">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
          </children>
       </AnchorPane>
    </children>

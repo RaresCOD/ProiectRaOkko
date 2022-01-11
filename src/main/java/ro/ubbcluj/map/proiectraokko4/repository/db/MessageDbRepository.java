@@ -4,16 +4,16 @@ package ro.ubbcluj.map.proiectraokko4.repository.db;
 import ro.ubbcluj.map.proiectraokko4.Message.Message;
 import ro.ubbcluj.map.proiectraokko4.domain.Utilizator;
 import ro.ubbcluj.map.proiectraokko4.domain.validators.Validator;
-import ro.ubbcluj.map.proiectraokko4.repository.Repository;
 import ro.ubbcluj.map.proiectraokko4.repository.paging.Page;
+import ro.ubbcluj.map.proiectraokko4.repository.paging.PageImplementation;
 import ro.ubbcluj.map.proiectraokko4.repository.paging.Pageable;
-import ro.ubbcluj.map.proiectraokko4.repository.paging.Paginator;
 import ro.ubbcluj.map.proiectraokko4.repository.paging.PagingRepository;
 
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.sql.Date;
 import java.util.*;
+import java.util.stream.StreamSupport;
 
 public class MessageDbRepository implements PagingRepository<Long, Message> {
     private String url;
@@ -250,12 +250,16 @@ public class MessageDbRepository implements PagingRepository<Long, Message> {
                 message.setData(date);
                 all.add(message);
             }
-            Paginator<Message> paginator = new Paginator<>(pageable, all.stream().toList());
-            return paginator.paginate();
+            return new PageImplementation<>(pageable, StreamSupport.stream(all.stream().spliterator(), false));
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
+        return null;
+    }
+
+    @Override
+    public Page<Message> findAllLike(Pageable pageable, Message entity) {
         return null;
     }
 }

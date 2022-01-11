@@ -4,13 +4,11 @@ package ro.ubbcluj.map.proiectraokko4.repository.db;
 import ro.ubbcluj.map.proiectraokko4.domain.Utilizator;
 import ro.ubbcluj.map.proiectraokko4.domain.validators.Validator;
 import ro.ubbcluj.map.proiectraokko4.repository.Repository;
-import ro.ubbcluj.map.proiectraokko4.repository.paging.Page;
-import ro.ubbcluj.map.proiectraokko4.repository.paging.Pageable;
-import ro.ubbcluj.map.proiectraokko4.repository.paging.Paginator;
-import ro.ubbcluj.map.proiectraokko4.repository.paging.PagingRepository;
+import ro.ubbcluj.map.proiectraokko4.repository.paging.*;
 
 import java.sql.*;
 import java.util.*;
+import java.util.stream.StreamSupport;
 
 /**
  * Repo care salveaza si aduce datele din baza de date "users"
@@ -92,7 +90,7 @@ public class UtilizatorDbRepository implements PagingRepository<Long, Utilizator
 
     @Override
     public List<Utilizator> findAll() {
-        Set<Utilizator> users = new HashSet<>();
+        List<Utilizator> users = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
              PreparedStatement statement = connection.prepareStatement("SELECT * from users");
              ResultSet resultSet = statement.executeQuery()) {
@@ -111,7 +109,7 @@ public class UtilizatorDbRepository implements PagingRepository<Long, Utilizator
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return users.stream().toList();
+        return users;
     }
 
     @Override
@@ -188,7 +186,7 @@ public class UtilizatorDbRepository implements PagingRepository<Long, Utilizator
     public Page<Utilizator> findAll(Pageable pageable) {
 
         String sql = "SELECT * FROM (SELECT *, ROW_NUMBER() over (ORDER BY id ASC) AS NoOfRows FROM users) AS Unused WHERE NoOfRows >= ? AND NoOfRows < ?";
-        Set<Utilizator> users = new HashSet<>();
+        List<Utilizator> users = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
              PreparedStatement ps = connection.prepareStatement(sql)){
 
@@ -210,8 +208,36 @@ public class UtilizatorDbRepository implements PagingRepository<Long, Utilizator
             e.printStackTrace();
         }
 
-        Paginator<Utilizator> paginator = new Paginator<>(pageable, users.stream().toList());
-        return paginator.paginate();
+        return new PageImplementation<>(pageable, StreamSupport.stream(users.stream().spliterator(), false));
+    }
+
+    @Override
+    public Page<Utilizator> findAllLike(Pageable pageable, Utilizator entity) {
+        String sql = "SELECT * FROM (SELECT *, ROW_NUMBER() over (ORDER BY id ASC) AS NoOfRows FROM users where username like ?) AS Unused WHERE NoOfRows >= ? AND NoOfRows < ?";
+        List<Utilizator> users = new ArrayList<>();
+        try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+             PreparedStatement ps = connection.prepareStatement(sql)){
+
+            ps.setString(1, "%" + entity.getUsername() + "%");
+            ps.setInt(2, pageable.getPageNumber() * pageable.getPageSize() + 1);
+            ps.setInt(3, (pageable.getPageNumber() + 1) * pageable.getPageSize() + 1);
+
+            ResultSet resultSet = ps.executeQuery();
+            while (resultSet.next()) {
+                Long id = resultSet.getLong("id");
+                String firstName = resultSet.getString("first_name");
+                String lastName = resultSet.getString("last_name");
+                String username = resultSet.getString("username");
+
+                Utilizator utilizator = new Utilizator(username, firstName, lastName);
+                utilizator.setId(id);
+                users.add(utilizator);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return new PageImplementation<>(pageable, StreamSupport.stream(users.stream().spliterator(), false));
     }
 }
 
