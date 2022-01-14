@@ -36,6 +36,7 @@ import ro.ubbcluj.map.proiectraokko4.service.UtilizatorService;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -178,19 +179,44 @@ public class UI_v2_Controller {
         ChatMsg.setItems(modelChatMsg);
         ChatMsg.setCellFactory(x ->{
             ListCell<Message> cell = new ListCell<Message>(){
+                Image image=new Image(getClass().getResource("images/icons8_topic_48px_1.png").toExternalForm());
+                ImageView imageView = new ImageView(image);
                 Label lblUserLeft = new Label();
                 Label lblTextLeft = new Label();
-                HBox hBoxLeft = new HBox(lblUserLeft, lblTextLeft);
-
+                HBox hBoxLeft = new HBox(lblTextLeft);
                 Label lblUserRight = new Label();
                 Label lblTextRight = new Label();
-                HBox hBoxRight = new HBox(lblTextRight, lblUserRight);
+                HBox hBoxRight = new HBox(lblTextRight);
+                StackPane stackPane = new StackPane();
+                StackPane stackPane2 = new StackPane();
+                HBox hBoxRight2 = new HBox();
+                HBox hBoxLeft2 = new HBox(imageView);
+
 
                 {
+
                     hBoxLeft.setAlignment(Pos.CENTER_LEFT);
                     hBoxLeft.setSpacing(5);
+                    hBoxLeft.setPadding(new Insets(5,20,5,20));
+
                     hBoxRight.setAlignment(Pos.CENTER_RIGHT);
                     hBoxRight.setSpacing(5);
+                    hBoxRight.setPadding(new Insets(5,20,5,20));
+
+                    hBoxRight2.setAlignment(Pos.CENTER_RIGHT);
+                    hBoxRight2.setSpacing(5);
+                    hBoxRight2.getChildren().add(imageView);
+
+                    stackPane.getChildren().addAll(hBoxRight2, hBoxRight);
+
+//                    hBoxLeft2.setAlignment(Pos.CENTER_LEFT);
+//                    hBoxLeft2.setSpacing(5);
+//                    hBoxLeft2.getChildren().add(imageView);
+
+
+
+                    stackPane2.getChildren().addAll(hBoxLeft2, hBoxLeft);
+
                 }
                 @Override
                 protected void updateItem(Message item, boolean empty) {
@@ -204,14 +230,23 @@ public class UI_v2_Controller {
                     else{
                         if(item.getFrom().getId().equals(UserId))
                         {
-                            lblTextRight.setText(item.getMsg());
-                            setGraphic(hBoxRight);
 
-                        }
-                        else{
-                            lblUserLeft.setText(item.getFrom() + ":");
+                            lblTextRight.setText(item.getMsg());
+                            imageView.setFitHeight(70);
+
+                            Text text = new Text(item.getMsg());
+                            text.applyCss();
+                            imageView.setFitWidth(text.getBoundsInLocal().getWidth()*1.75);
+                            setGraphic(stackPane);
+
+                        } else{
+
                             lblTextLeft.setText(item.getMsg());
-                            setGraphic(hBoxLeft);
+                            imageView.setFitHeight(70);
+                            Text text = new Text(item.getMsg());
+                            text.applyCss();
+                            imageView.setFitWidth(text.getBoundsInLocal().getWidth()*1.75);
+                            setGraphic(stackPane2);
                         }
                     }
                 }
