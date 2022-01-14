@@ -83,22 +83,6 @@
             <JFXListView fx:id="ChatList" layoutX="8.0" layoutY="14.0" onMouseClicked="#doThis" prefHeight="513.0" prefWidth="383.0" style="-fx-background-color: #b3b3ff;" />
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="Chat" layoutX="20.0" layoutY="80.0" prefHeight="530.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
-         <children>
-            <JFXTextArea fx:id="MsgText" labelFloat="true" layoutX="18.0" layoutY="471.0" prefHeight="45.0" prefWidth="321.0" promptText="Type..." style="-fx-background-radius: 100px; -fx-border-radius: 100px; -fx-background-color: #ffffff;" wrapText="true" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="18.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="471.0">
-               <font>
-                  <Font name="SansSerif Regular" size="15.0" />
-               </font>
-            </JFXTextArea>
-            <ImageView layoutX="347.0" layoutY="477.0" onMousePressed="#handleSendMessage">
-               <image>
-                  <Image url="@../images/icons8_send_letter_32px.png" />
-               </image>
-            </ImageView>
-            <JFXListView fx:id="ChatMsg" layoutX="1.0" layoutY="48.0" prefHeight="422.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="48.0" />
-            <Text fx:id="test" layoutX="58.0" layoutY="18.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="282.9830722808838" />
-         </children>
-      </AnchorPane>
       <AnchorPane fx:id="SearchPage" layoutX="10.0" layoutY="70.0" prefHeight="530.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
          <children>
             <JFXTextArea fx:id="SearchUsers" focusColor="#5d84f8" labelFloat="true" layoutX="27.0" layoutY="14.0" prefHeight="104.0" prefWidth="339.0" promptText="Search" style="-fx-border-radius: 100px; -fx-background-radius: 100px; -fx-background-color: #ffff;" unFocusColor="#abafee" AnchorPane.bottomAnchor="465.0" AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="20.0" />
@@ -166,6 +150,22 @@
                   <Image url="@../images/icons8_group_task_30px.png" />
                </image>
             </ImageView>
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="Chat" layoutX="20.0" layoutY="80.0" prefHeight="530.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
+         <children>
+            <JFXTextArea fx:id="MsgText" labelFloat="true" layoutX="18.0" layoutY="471.0" prefHeight="45.0" prefWidth="321.0" promptText="Type..." style="-fx-background-radius: 100px; -fx-border-radius: 100px; -fx-background-color: #ffffff;" wrapText="true" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="18.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="471.0">
+               <font>
+                  <Font name="SansSerif Regular" size="15.0" />
+               </font>
+            </JFXTextArea>
+            <ImageView layoutX="347.0" layoutY="477.0" onMousePressed="#handleSendMessage">
+               <image>
+                  <Image url="@../images/icons8_send_letter_32px.png" />
+               </image>
+            </ImageView>
+            <JFXListView fx:id="ChatMsg" layoutY="42.0" prefHeight="422.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" styleClass="gray-background" stylesheets="@../css/style.css" AnchorPane.bottomAnchor="66.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="42.0" />
+            <Text fx:id="test" layoutX="58.0" layoutY="18.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="282.9830722808838" />
          </children>
       </AnchorPane>
    </children>

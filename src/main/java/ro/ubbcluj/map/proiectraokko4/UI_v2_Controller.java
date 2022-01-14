@@ -9,6 +9,8 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -16,13 +18,14 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
+import javafx.scene.paint.*;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import ro.ubbcluj.map.proiectraokko4.Message.Message;
 import ro.ubbcluj.map.proiectraokko4.controller.MessageAlert;
@@ -41,6 +44,7 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
 
 public class UI_v2_Controller {
 
@@ -67,7 +71,7 @@ public class UI_v2_Controller {
     @FXML
     private JFXListView<String> ChatList;
     @FXML
-    private JFXListView<Message> ChatMsg;
+    private ListView<Message> ChatMsg;
     @FXML
     private JFXListView<String> FRList;
     @FXML
@@ -147,13 +151,74 @@ public class UI_v2_Controller {
         startHP();
 
         ChatList.setItems(model);
+
+//        ChatMsg.setBackground(new Background(
+//                new BackgroundFill(
+//                        new LinearGradient(0, 0, 0, 1, true,
+//                                CycleMethod.NO_CYCLE,
+//                                new Stop(0, Color.web("#4568DC")),
+//                                new Stop(1, Color.web("#B06AB3"))
+//                        ), CornerRadii.EMPTY, Insets.EMPTY
+//                ),
+//                new BackgroundFill(
+//                        new ImagePattern(
+//                                new Image("https://edencoding.com/resources/wp-content/uploads/2021/02/Stars_128.png"),
+//                                0, 0, 128, 128, false
+//                        ), CornerRadii.EMPTY, Insets.EMPTY
+//                ),
+//                new BackgroundFill(
+//                        new RadialGradient(
+//                                0, 0, 0.5, 0.5, 0.5, true,
+//                                CycleMethod.NO_CYCLE,
+//                                new Stop(0, Color.web("#FFFFFF33")),
+//                                new Stop(1, Color.web("#00000033"))),
+//                        CornerRadii.EMPTY, Insets.EMPTY
+//                )
+//        ));
         ChatMsg.setItems(modelChatMsg);
-        ChatMsg.setCellFactory(x -> new ListCell<Message>() {
-            protected void updateItem(Message item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty || item == null ? "" : item.getFrom().getUsername().concat(": " + item.getMsg()));
-            }
+        ChatMsg.setCellFactory(x ->{
+            ListCell<Message> cell = new ListCell<Message>(){
+                Label lblUserLeft = new Label();
+                Label lblTextLeft = new Label();
+                HBox hBoxLeft = new HBox(lblUserLeft, lblTextLeft);
+
+                Label lblUserRight = new Label();
+                Label lblTextRight = new Label();
+                HBox hBoxRight = new HBox(lblTextRight, lblUserRight);
+
+                {
+                    hBoxLeft.setAlignment(Pos.CENTER_LEFT);
+                    hBoxLeft.setSpacing(5);
+                    hBoxRight.setAlignment(Pos.CENTER_RIGHT);
+                    hBoxRight.setSpacing(5);
+                }
+                @Override
+                protected void updateItem(Message item, boolean empty) {
+                    super.updateItem(item, empty);
+
+                    if(empty)
+                    {
+                        setText(null);
+                        setGraphic(null);
+                    }
+                    else{
+                        if(item.getFrom().getId().equals(UserId))
+                        {
+                            lblTextRight.setText(item.getMsg());
+                            setGraphic(hBoxRight);
+
+                        }
+                        else{
+                            lblUserLeft.setText(item.getFrom() + ":");
+                            lblTextLeft.setText(item.getMsg());
+                            setGraphic(hBoxLeft);
+                        }
+                    }
+                }
+            };
+            return cell;
         });
+
         SearchList.setItems(modelUsers);
         SearchList.setCellFactory(x -> new ListCell<Utilizator>(){
             protected void updateItem(Utilizator item, boolean empty) {
@@ -285,11 +350,11 @@ public class UI_v2_Controller {
 
             try {
                 PDPageContentStream contentStream = new PDPageContentStream(document, page);
-
                 contentStream.beginText();
                 contentStream.setFont(PDType1Font.COURIER, 12);
                 contentStream.setLeading(14.5f);
                 contentStream.newLineAtOffset(50, 700);
+
                 contentStream.showText("Private chat with " + selectedFriend.getFirstName() + " " + selectedFriend.getLastName() + " in this period of time:");
                 contentStream.newLine();
 

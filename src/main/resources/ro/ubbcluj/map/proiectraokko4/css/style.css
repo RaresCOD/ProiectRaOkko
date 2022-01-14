@@ -51,3 +51,11 @@
     -fx-background-repeat: no-repeat;
     -fx-background-position: center center; /* Put the icon in the center */
 }
+.list-view .list-cell:even {
+    -fx-background-color:  #808080;
+    -fx-text-fill: white;
+}
+.list-view .list-cell:odd {
+    -fx-background-color:  #808080;
+    -fx-text-fill: white;
+}
