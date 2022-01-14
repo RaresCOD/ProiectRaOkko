@@ -11,10 +11,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -23,7 +20,12 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import ro.ubbcluj.map.proiectraokko4.Message.Message;
+import ro.ubbcluj.map.proiectraokko4.controller.MessageAlert;
 import ro.ubbcluj.map.proiectraokko4.domain.Prietenie;
 import ro.ubbcluj.map.proiectraokko4.domain.Tuple;
 import ro.ubbcluj.map.proiectraokko4.domain.Utilizator;
@@ -33,6 +35,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.function.Predicate;
@@ -67,6 +70,11 @@ public class UI_v2_Controller {
     private JFXListView<Message> ChatMsg;
     @FXML
     private JFXListView<String> FRList;
+    @FXML
+    private DatePicker DatePicker;
+    @FXML
+    private JFXComboBox<Utilizator> FriendsBox;
+
 
 
 
@@ -106,6 +114,13 @@ public class UI_v2_Controller {
         Username.setText(UM);
         Chats.setText(String.valueOf(service.allChats(UserId).size()));
         Friends.setText(String.valueOf(service.getFriends(UserId).size()));
+        FriendsBox.getItems().addAll(service.Friends(UserId));
+        FriendsBox.setCellFactory(x -> new ListCell<Utilizator>(){
+            protected void updateItem(Utilizator item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? "" : item.getUsername());
+            }
+        });
     }
 
     private void startHP() {
@@ -257,5 +272,101 @@ public class UI_v2_Controller {
         }
 
         MsgText.clear();
+    }
+
+    public void handleExportPrivateButtonAction(ActionEvent actionEvent) {
+        Utilizator selectedFriend = FriendsBox.getSelectionModel().getSelectedItem();
+        if(DatePicker.getValue() == null)
+            MessageAlert.showErrorMessage(null,"No selected dates!");
+        else if(selectedFriend != null){
+            PDDocument document = new PDDocument();
+            PDPage page = new PDPage();
+            document.addPage( page );
+
+            try {
+                PDPageContentStream contentStream = new PDPageContentStream(document, page);
+
+                contentStream.beginText();
+                contentStream.setFont(PDType1Font.COURIER, 12);
+                contentStream.setLeading(14.5f);
+                contentStream.newLineAtOffset(50, 700);
+                contentStream.showText("Private chat with " + selectedFriend.getFirstName() + " " + selectedFriend.getLastName() + " in this period of time:");
+                contentStream.newLine();
+
+                List<Message> messages = service.MsgToFriend(UserId, selectedFriend.getId());
+                extractMessagesForExport(contentStream, messages);
+                document.save("src/Export2.pdf");
+                document.close();
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        else MessageAlert.showErrorMessage(null,"No selected user!");
+    }
+
+    public void handleExportActivityButtonAction(ActionEvent actionEvent) {
+        if(DatePicker.getValue() == null )
+            MessageAlert.showErrorMessage(null,"No selected dates!");
+        else {
+            PDDocument document = new PDDocument();
+            PDPage page = new PDPage();
+            document.addPage(page);
+            try {
+
+
+                PDPageContentStream contentStream = new PDPageContentStream(document, page);
+
+                contentStream.beginText();
+                contentStream.setFont(PDType1Font.COURIER, 12);
+                contentStream.setLeading(14.5f);
+                contentStream.newLineAtOffset(50, 700);
+                contentStream.showText("Friendships made in this period of time:");
+                contentStream.newLine();
+
+                List<Tuple<Utilizator, Date>> friendsMade = service.getFriends(UserId);
+                List<Tuple<Utilizator, Date>> friends = StreamSupport.stream(friendsMade.spliterator(), false).collect(Collectors.toList());
+                friends.forEach(f -> {
+                    if (f.getRight().toLocalDate().isEqual(DatePicker.getValue())) {
+                        try {
+                            contentStream.newLine();
+                            contentStream.showText(f.toString());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
+                contentStream.newLine();
+                contentStream.newLine();
+                contentStream.showText("Messages sent and receved in this period of time:");
+                contentStream.newLine();
+
+                List<Message> messages = service.getAllMessages(UserId);
+                extractMessagesForExport(contentStream, messages);
+
+                document.save("src/Export1.pdf");
+                document.close();
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
+
+    }
+    private void extractMessagesForExport(PDPageContentStream contentStream, List<Message> messages) throws IOException {
+        messages.sort(Comparator.comparing(Message::getId));
+        messages.forEach(m -> {
+            if(m.getData().toLocalDate().isEqual(DatePicker.getValue())){
+                try {
+                    contentStream.newLine();
+                    contentStream.showText(m.toString());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        contentStream.endText();
+
+        contentStream.close();
     }
 }

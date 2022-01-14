@@ -6,6 +6,7 @@
 <?import com.jfoenix.controls.JFXSlider?>
 <?import com.jfoenix.controls.JFXTextArea?>
 <?import java.lang.String?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -115,7 +116,7 @@
                   <Image url="@../images/icons8_male_user_104px.png" />
                </image>
             </ImageView>
-            <JFXButton layoutX="130.0" layoutY="476.0" onAction="#handleEditProfile" prefHeight="32.0" prefWidth="140.0" style="-fx-border-radius: 5em; -fx-background-radius: 5em; -fx-background-color: #6666ff;" text="Edit Profile" />
+            <JFXButton layoutX="95.0" layoutY="467.0" onAction="#handleEditProfile" prefHeight="32.0" prefWidth="209.0" style="-fx-border-radius: 5em; -fx-background-radius: 5em; -fx-background-color: #6666ff;" text="Edit Profile" />
             <Text fx:id="Username" layoutX="123.0" layoutY="145.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="153.0">
                <font>
                   <Font name="SansSerif Regular" size="18.0" />
@@ -144,6 +145,25 @@
             <ImageView fitHeight="38.0" fitWidth="39.0" layoutX="64.0" layoutY="213.0">
                <image>
                   <Image url="@../images/icons8_friends_50px.png" />
+               </image>
+            </ImageView>
+            <DatePicker fx:id="DatePicker" layoutX="111.0" layoutY="267.0" stylesheets="@../css/style.css">
+               <styleClass>
+                  <String fx:value="arrow-button" />
+                  <String fx:value="date-picker" />
+               </styleClass>
+            </DatePicker>
+            <JFXButton layoutX="96.0" layoutY="415.0" onAction="#handleExportPrivateButtonAction" prefHeight="32.0" prefWidth="209.0" style="-fx-border-radius: 5em; -fx-background-radius: 5em; -fx-background-color: #6666ff;" text="Export Chat" />
+            <JFXButton layoutX="95.0" layoutY="359.0" onAction="#handleExportActivityButtonAction" prefHeight="32.0" prefWidth="209.0" style="-fx-border-radius: 5em; -fx-background-radius: 5em; -fx-background-color: #6666ff;" text="Export Activity" />
+            <JFXComboBox fx:id="FriendsBox" labelFloat="true" layoutX="110.0" layoutY="310.0" prefHeight="26.0" prefWidth="180.0" promptText="Friends" />
+            <ImageView fitHeight="30.0" fitWidth="30.0" layoutX="68.0" layoutY="263.0">
+               <image>
+                  <Image url="@../images/icons8_calendar_24px.png" />
+               </image>
+            </ImageView>
+            <ImageView fitHeight="32.0" fitWidth="32.0" layoutX="68.0" layoutY="310.0">
+               <image>
+                  <Image url="@../images/icons8_group_task_30px.png" />
                </image>
             </ImageView>
          </children>

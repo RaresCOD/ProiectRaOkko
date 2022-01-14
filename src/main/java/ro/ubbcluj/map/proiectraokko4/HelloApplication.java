@@ -49,7 +49,6 @@ public class HelloApplication extends Application {
 //        primaryStage.setTitle("Log in!");
         primaryStage.setScene(scene);
         primaryStage.show();
-
     }
 
     public static void main(String[] args) {

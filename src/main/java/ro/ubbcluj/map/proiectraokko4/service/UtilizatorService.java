@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.sql.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -474,5 +475,20 @@ public class UtilizatorService {
 
         }
         return rezBun;
+    }
+
+    public List<Message> MsgToFriend(Long id1, Long id2) {
+        List<Message> allMsg = repoMessages.findAll();
+        List<Message> rez = new ArrayList<>();
+        for(Message curent: allMsg){
+            if((Objects.equals(curent.getFrom().getId(), id1) && Objects.equals(curent.getTo().get(0).getId(), id2)) || (Objects.equals(curent.getFrom().getId(), id2) && Objects.equals(curent.getTo().get(0).getId(), id1))) {
+                rez.add(curent);
+            }
+        }
+        return rez;
+    }
+
+    public List<Utilizator> Friends(Long id) {
+        return repo.findOne(id).getFriends();
     }
 }
