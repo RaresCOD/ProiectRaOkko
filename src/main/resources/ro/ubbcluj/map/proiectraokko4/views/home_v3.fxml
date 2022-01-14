@@ -75,12 +75,12 @@
          </children></AnchorPane>
       <AnchorPane fx:id="FriendRequestPage" layoutX="10.0" layoutY="70.0" prefHeight="530.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
          <children>
-            <JFXListView fx:id="FRList" layoutX="14.0" layoutY="14.0" prefHeight="503.0" prefWidth="370.0" style="-fx-background-color: #b3b3ff;" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0" />
+            <JFXListView fx:id="FRList" layoutX="14.0" layoutY="14.0" prefHeight="503.0" prefWidth="370.0" style="-fx-background-color: #b3b3ff;" styleClass="gray-background" stylesheets="@../css/style.css" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0" />
          </children>
       </AnchorPane>
       <AnchorPane fx:id="ChatPage" layoutX="10.0" layoutY="70.0" prefHeight="530.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
          <children>
-            <JFXListView fx:id="ChatList" layoutX="8.0" layoutY="14.0" onMouseClicked="#doThis" prefHeight="513.0" prefWidth="383.0" style="-fx-background-color: #b3b3ff;" />
+            <JFXListView fx:id="ChatList" layoutX="8.0" layoutY="14.0" onMouseClicked="#doThis" prefHeight="513.0" prefWidth="383.0" style="-fx-background-color: #b3b3ff;" styleClass="gray-background" stylesheets="@../css/style.css" />
          </children>
       </AnchorPane>
       <AnchorPane fx:id="SearchPage" layoutX="10.0" layoutY="70.0" prefHeight="530.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
@@ -90,6 +90,7 @@
                <styleClass>
                   <String fx:value="JFXListCell" />
                   <String fx:value="JFXListCell" />
+                  <String fx:value="gray-background" />
                </styleClass></JFXListView>
          </children>
       </AnchorPane>
