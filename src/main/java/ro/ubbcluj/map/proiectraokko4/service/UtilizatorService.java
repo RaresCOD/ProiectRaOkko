@@ -129,7 +129,7 @@ public class UtilizatorService implements Observable {
     }
 
     private int pageNumber = 0;
-    private int pageSize = 12;
+    private int pageSize = 18;
 
     public List<Utilizator> getNextUsers(String containsUsername)
     {

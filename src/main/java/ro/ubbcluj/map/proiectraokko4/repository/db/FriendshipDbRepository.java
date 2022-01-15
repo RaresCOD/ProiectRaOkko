@@ -110,6 +110,7 @@ public class FriendshipDbRepository implements PagingRepository<Tuple<Long, Long
             ps.setInt(4, entity.getStatus());
 
             ps.executeUpdate();
+            return entity;
         } catch (SQLException e) {
             e.printStackTrace();
         }

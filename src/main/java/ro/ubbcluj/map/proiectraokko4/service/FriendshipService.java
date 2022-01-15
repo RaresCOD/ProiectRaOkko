@@ -28,8 +28,8 @@ public class FriendshipService implements Observable {
 
     /**
      *
-     * @param userRepo user userRepo
-     * @param friendRepo friendship userRepo
+     * @param userRepo user repo
+     * @param friendRepo friendship repo
      */
     public FriendshipService(PagingRepository<Long, Utilizator> userRepo, PagingRepository<Tuple<Long, Long>, Prietenie> friendRepo) {
         this.userRepo = userRepo;
@@ -224,7 +224,7 @@ public class FriendshipService implements Observable {
      *
      * @return int
      */
-    public int JonnyVorbaretu() {
+    public int CeaMaiMareComunitate() {
         List<Utilizator> users = userRepo.findAll();
         DFS dfs = new DFS(users.size(), friendRepo.findAll(), users);
         return dfs.execute2();
@@ -246,7 +246,7 @@ public class FriendshipService implements Observable {
     }
 
     private int listPageNumber = 0;
-    private int listPageSize = 8;
+    private int listPageSize = 5;
 
     public void setListPageSize(int pageSize)
     {
@@ -289,7 +289,7 @@ public class FriendshipService implements Observable {
     }
 
     private int pendingListPageNumber = 0;
-    private int pendingListPageSize = 14;
+    private int pendingListPageSize = 5;
 
     public List<Tuple<Utilizator, Date>> getPendingListNextFriends(Long id, int status)
     {

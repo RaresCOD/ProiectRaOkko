@@ -4,6 +4,7 @@ package ro.ubbcluj.map.proiectraokko4.repository.db;
 import ro.ubbcluj.map.proiectraokko4.Message.Message;
 import ro.ubbcluj.map.proiectraokko4.domain.Utilizator;
 import ro.ubbcluj.map.proiectraokko4.domain.validators.Validator;
+import ro.ubbcluj.map.proiectraokko4.repository.Repository;
 import ro.ubbcluj.map.proiectraokko4.repository.paging.Page;
 import ro.ubbcluj.map.proiectraokko4.repository.paging.PageImplementation;
 import ro.ubbcluj.map.proiectraokko4.repository.paging.Pageable;
@@ -15,7 +16,7 @@ import java.sql.Date;
 import java.util.*;
 import java.util.stream.StreamSupport;
 
-public class MessageDbRepository implements PagingRepository<Long, Message> {
+public class MessageDbRepository implements Repository<Long, Message> {
     private String url;
     private String username;
     private String password;
@@ -81,8 +82,10 @@ public class MessageDbRepository implements PagingRepository<Long, Message> {
                     }
                 }
                 String msg = resultSet.getString("msg");
+                LocalDateTime date = resultSet.getTimestamp("data").toLocalDateTime();
                 Message message = new Message(utilizator,list,msg);
                 message.setId(idCurent);
+                message.setData(date);
                 return message;
             }
         } catch (SQLException e) {
@@ -191,77 +194,6 @@ public class MessageDbRepository implements PagingRepository<Long, Message> {
 
     @Override
     public Message update(Message entity) {
-        return null;
-    }
-
-    @Override
-    public Page<Message> findAll(Pageable pageable) {
-
-        String sql = "SELECT * FROM (SELECT *, ROW_NUMBER() over (ORDER BY id ASC) AS NoOfRows FROM messages) AS Unused WHERE NoOfRows >= ? AND NoOfRows < ?";
-
-        try(Connection connection = DriverManager.getConnection(url, username, password);
-            PreparedStatement ps = connection.prepareStatement(sql)) {
-
-            ps.setInt(1, pageable.getPageNumber() * pageable.getPageSize() + 1);
-            ps.setInt(2, (pageable.getPageNumber() + 1) * pageable.getPageSize() + 1);
-
-            ResultSet resultSet = ps.executeQuery();
-            Set<Message> all = new HashSet<>();
-            while (resultSet.next()) {
-                Long idCurent = resultSet.getLong("id");
-                Long from = resultSet.getLong("from1");
-
-                String sql1 = "select * from users where id = " + from;
-
-                PreparedStatement ps1 = connection.prepareStatement(sql1);
-                ResultSet resultSet1 = ps1.executeQuery();
-                Utilizator utilizator = new Utilizator("a","a","a", "a");
-                while (resultSet1.next()) {
-                    String firstName = resultSet1.getString("first_name");
-                    String lastName = resultSet1.getString("last_name");
-                    String username = resultSet1.getString("username");
-                    utilizator.setFirstName(firstName);
-                    utilizator.setLastName(lastName);
-                    utilizator.setUsername(username);
-                    utilizator.setId(Long.valueOf(from));
-                }
-
-                String toString = resultSet.getString("to1");
-                String toString1 = toString.strip();
-                String[] listTo = toString1.split(" ");
-                List<Utilizator> list = new ArrayList<>();
-                for(String curent: listTo) {
-                    String sql2 = "select * from users where id = " + curent;
-
-                    PreparedStatement ps2 = connection.prepareStatement(sql2);
-                    ResultSet resultSet2 = ps2.executeQuery();
-                    while (resultSet2.next()) {
-                        String firstName1 = resultSet2.getString("first_name");
-                        String lastName1 = resultSet2.getString("last_name");
-                        String username1 = resultSet2.getString("username");
-                        String password1 = resultSet2.getString("password");
-                        Utilizator utilizator1 = new Utilizator(username1, firstName1, lastName1, password1);
-                        utilizator1.setId(Long.valueOf(curent));
-                        list.add(utilizator1);
-                    }
-                }
-                String msg = resultSet.getString("msg");
-                LocalDateTime date = resultSet.getTimestamp("data").toLocalDateTime();
-                Message message = new Message(utilizator,list,msg);
-                message.setId(idCurent);
-                message.setData(date);
-                all.add(message);
-            }
-            return new PageImplementation<>(pageable, StreamSupport.stream(all.stream().spliterator(), false));
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    @Override
-    public Page<Message> findAllLike(Pageable pageable, Message entity) {
         return null;
     }
 }

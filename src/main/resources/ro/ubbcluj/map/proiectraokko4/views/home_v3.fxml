@@ -3,12 +3,13 @@
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXComboBox?>
 <?import com.jfoenix.controls.JFXListView?>
-<?import com.jfoenix.controls.JFXSlider?>
 <?import com.jfoenix.controls.JFXTextArea?>
+<?import java.lang.String?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -17,47 +18,61 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="399.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ro.ubbcluj.map.proiectraokko4.UI_v2_Controller">
    <children>
-      <AnchorPane fx:id="EditPage" layoutX="10.0" layoutY="70.0" prefHeight="530.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
+      <AnchorPane fx:id="EditPage" layoutX="10.0" layoutY="70.0" prefHeight="530.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" visible="false" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
          <children>
-            <ImageView layoutX="148.0">
+            <ImageView layoutX="148.0" layoutY="37.0">
                <image>
-                  <Image url="@../images/icons8_male_user_104px.png" />
+                  <Image url="@../images/profile_icon.png" />
                </image>
             </ImageView>
             <JFXButton layoutX="148.0" layoutY="476.0" onAction="#handleEditProfile" prefHeight="30.0" prefWidth="104.0" style="-fx-border-radius: 5em; -fx-background-radius: 5em; -fx-background-color: #6666ff;" text="Save" />
-            <JFXTextArea labelFloat="true" layoutX="80.0" layoutY="132.0" prefHeight="27.0" prefWidth="242.0" promptText="Username" />
-            <JFXTextArea labelFloat="true" layoutX="74.0" layoutY="186.0" prefHeight="38.0" prefWidth="251.0" promptText="Password" />
-            <JFXSlider layoutX="182.0" layoutY="258.0" />
-            <Label layoutX="124.0" layoutY="261.0" text="Age" />
-            <JFXComboBox fx:id="GenderBox" labelFloat="true" layoutX="155.0" layoutY="325.0" promptText="Gender" />
-            <ImageView layoutX="33.0" layoutY="135.0">
+            <JFXTextArea labelFloat="true" layoutX="102.0" layoutY="184.0" prefHeight="27.0" prefWidth="242.0" />
+            <JFXTextArea labelFloat="true" layoutX="95.0" layoutY="284.0" prefHeight="38.0" prefWidth="251.0" />
+            <ImageView layoutX="55.0" layoutY="187.0">
                <image>
-                  <Image url="@../images/icons8_customer_32px.png" />
+                  <Image url="@../images/profile.png" />
                </image>
             </ImageView>
-            <ImageView fitHeight="38.0" fitWidth="32.0" layoutX="33.0" layoutY="186.0">
+            <ImageView fitHeight="38.0" fitWidth="32.0" layoutX="54.0" layoutY="284.0">
                <image>
-                  <Image url="@../images/icons8_lock_60px.png" />
+                  <Image url="@../images/lock.png" />
                </image>
             </ImageView>
          </children>
       </AnchorPane>
       <AnchorPane fx:id="BottomBar" layoutY="590.0" prefHeight="60.0" prefWidth="400.0" style="-fx-background-color: #000033;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="590.0">
          <children>
-            <ImageView fx:id="ChatImg" fitHeight="49.0" fitWidth="49.0" layoutX="42.0" layoutY="6.0" onMousePressed="#handleButtonAction">
+            <ImageView fx:id="HomeImg" fitHeight="49.0" fitWidth="49.0" layoutX="329.0" layoutY="6.0" onMousePressed="#handleButtonAction">
                <image>
-                  <Image url="@../images/icons8_home_32px_1.png" />
+                  <Image url="@../images/profile.png" />
                </image>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
             </ImageView>
-            <ImageView fx:id="HomeImg" fitHeight="49.0" fitWidth="49.0" layoutX="309.0" layoutY="6.0" onMousePressed="#handleButtonAction">
-               <image>
-                  <Image url="@../images/icons8_customer_32px.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="SearchImg" fitHeight="49.0" fitWidth="49.0" layoutX="175.0" layoutY="6.0" onMousePressed="#handleButtonAction">
+            <ImageView fx:id="SearchImg" fitHeight="49.0" fitWidth="49.0" layoutX="135.0" layoutY="6.0" onMousePressed="#handleButtonAction">
                <image>
                   <Image url="@../images/icons8_search_32px.png" />
                </image>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </ImageView>
+            <ImageView fx:id="EventsImg" fitHeight="38.0" fitWidth="39.0" layoutX="242.0" layoutY="11.0" onMousePressed="#handleButtonAction" preserveRatio="true">
+               <image>
+                  <Image url="@../images/events_icon.png" />
+               </image>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </ImageView>
+            <ImageView fx:id="ChatImg" fitHeight="49.0" fitWidth="49.0" layoutX="32.0" layoutY="6.0" onMousePressed="#handleButtonAction">
+               <image>
+                  <Image url="@../images/chat_icon.jpg" />
+               </image>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
             </ImageView>
          </children>
       </AnchorPane>
@@ -67,42 +82,65 @@
                <image>
                   <Image url="@../images/icons8_team_30px_1.png" />
                </image>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
             </ImageView>
-            <Text fx:id="TextUsername" fill="#6b6a6a" layoutX="14.0" layoutY="38.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="166.9830722808838">
+            <Text fx:id="TextUsername" fill="#6b6a6a" layoutX="14.0" layoutY="38.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Username" wrappingWidth="166.9830722808838">
                <font>
                   <Font name="SansSerif Regular" size="25.0" />
                </font>
             </Text>
+            <ImageView fitHeight="30.0" fitWidth="30.0" layoutX="295.0" layoutY="15.0" onMousePressed="#handleNotifications" preserveRatio="true">
+               <image>
+                  <Image url="@../images/notifications_icon.jpg" />
+               </image>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </ImageView>
          </children></AnchorPane>
-      <AnchorPane fx:id="ChatPage" layoutX="10.0" layoutY="70.0" prefHeight="530.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
+      <AnchorPane fx:id="ChatPage" layoutX="10.0" layoutY="70.0" prefHeight="530.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" visible="false" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
          <children>
-            <JFXListView fx:id="ChatList" layoutX="8.0" layoutY="14.0" onMouseClicked="#doThis" prefHeight="513.0" prefWidth="383.0" style="-fx-background-color: #b3b3ff;" />
+            <JFXListView fx:id="ChatList" layoutX="8.0" layoutY="49.0" onMouseClicked="#handleChatListOnMouseClick" prefHeight="478.0" prefWidth="383.0" style="-fx-background-color: #6b6b99;" />
+            <Text fill="#6b6a6a" layoutX="20.0" layoutY="40.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Chats" textAlignment="CENTER" wrappingWidth="329.0">
+               <font>
+                  <Font name="SansSerif Regular" size="27.0" />
+               </font>
+            </Text>
+            <ImageView fitHeight="25.0" fitWidth="30.0" layoutX="349.0" layoutY="18.0" onMousePressed="#handleAddChatPage" preserveRatio="true">
+               <image>
+                  <Image url="@../images/plus_icon.jpg" />
+               </image>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </ImageView>
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="Chat" layoutX="20.0" layoutY="80.0" prefHeight="530.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
+      <AnchorPane fx:id="Chat" layoutX="20.0" layoutY="80.0" prefHeight="530.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" visible="false" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
          <children>
-            <JFXTextArea fx:id="MsgText" labelFloat="true" layoutX="18.0" layoutY="471.0" onKeyPressed="#onKeyPressedMsgText" prefHeight="45.0" prefWidth="321.0" promptText="Type..." style="-fx-background-radius: 100px; -fx-border-radius: 100px; -fx-background-color: #ffffff;" wrapText="true" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="18.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="471.0">
+            <JFXTextArea fx:id="MsgText" labelFloat="true" layoutX="18.0" layoutY="484.0" onKeyPressed="#onKeyPressedMsgText" prefHeight="32.0" prefWidth="339.0" style="-fx-background-color: #6b6b99;" wrapText="true" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="18.0" AnchorPane.rightAnchor="42.0" AnchorPane.topAnchor="484.0">
                <font>
                   <Font name="SansSerif Regular" size="15.0" />
                </font>
             </JFXTextArea>
-            <ImageView layoutX="347.0" layoutY="477.0" onMousePressed="#handleSendMessage">
+            <ImageView fx:id="ChatSendImg" layoutX="357.0" layoutY="484.0" onMousePressed="#handleSendMessage">
                <image>
                   <Image url="@../images/icons8_send_letter_32px.png" />
                </image>
             </ImageView>
-            <JFXListView fx:id="ChatMsg" layoutX="1.0" layoutY="48.0" prefHeight="422.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="48.0" />
-            <Text fx:id="test" layoutX="58.0" layoutY="18.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="282.9830722808838" />
+            <JFXListView fx:id="ChatMsg" layoutX="1.0" layoutY="1.0" prefHeight="469.0" prefWidth="399.0" style="-fx-background-color: #6b6b99;" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="1.0" />
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="HomePage" layoutY="60.0" prefHeight="530.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
+      <AnchorPane fx:id="HomePage" layoutY="60.0" prefHeight="530.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" visible="false" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
          <children>
             <ImageView layoutX="148.0">
                <image>
-                  <Image url="@../images/icons8_male_user_104px.png" />
+                  <Image url="@../images/profile_icon.png" />
                </image>
             </ImageView>
-            <JFXButton layoutX="130.0" layoutY="476.0" onAction="#handleEditProfile" prefHeight="32.0" prefWidth="140.0" style="-fx-border-radius: 5em; -fx-background-radius: 5em; -fx-background-color: #6666ff;" text="Edit Profile" />
+            <JFXButton layoutX="95.0" layoutY="467.0" onAction="#handleEditProfile" prefHeight="32.0" prefWidth="209.0" style="-fx-border-radius: 5em; -fx-background-radius: 5em; -fx-background-color: #6666ff;" text="Edit Profile" />
             <Text fx:id="Username" layoutX="123.0" layoutY="145.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="153.0">
                <font>
                   <Font name="SansSerif Regular" size="18.0" />
@@ -120,7 +158,7 @@
             </Text>
             <ImageView layoutX="67.0" layoutY="123.0">
                <image>
-                  <Image url="@../images/icons8_customer_32px.png" />
+                  <Image url="@../images/profile.png" />
                </image>
             </ImageView>
             <ImageView fitHeight="38.0" fitWidth="32.0" layoutX="67.0" layoutY="166.0">
@@ -133,11 +171,30 @@
                   <Image url="@../images/icons8_friends_50px.png" />
                </image>
             </ImageView>
+            <DatePicker fx:id="DatePicker" layoutX="111.0" layoutY="267.0" stylesheets="@../css/style.css">
+               <styleClass>
+                  <String fx:value="arrow-button" />
+                  <String fx:value="date-picker" />
+               </styleClass>
+            </DatePicker>
+            <JFXButton layoutX="96.0" layoutY="415.0" onAction="#handleExportPrivateButtonAction" prefHeight="32.0" prefWidth="209.0" style="-fx-border-radius: 5em; -fx-background-radius: 5em; -fx-background-color: #6666ff;" text="Export Chat" />
+            <JFXButton layoutX="95.0" layoutY="359.0" onAction="#handleExportActivityButtonAction" prefHeight="32.0" prefWidth="209.0" style="-fx-border-radius: 5em; -fx-background-radius: 5em; -fx-background-color: #6666ff;" text="Export Activity" />
+            <JFXComboBox fx:id="FriendsBox" labelFloat="true" layoutX="110.0" layoutY="310.0" prefHeight="26.0" prefWidth="180.0" promptText="Friends" />
+            <ImageView fitHeight="30.0" fitWidth="30.0" layoutX="68.0" layoutY="263.0">
+               <image>
+                  <Image url="@../images/calendar.png" />
+               </image>
+            </ImageView>
+            <ImageView fitHeight="32.0" fitWidth="32.0" layoutX="68.0" layoutY="310.0">
+               <image>
+                  <Image url="@../images/group_task.png" />
+               </image>
+            </ImageView>
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="FriendsPage" layoutX="10.0" layoutY="70.0" prefHeight="530.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
+      <AnchorPane fx:id="FriendsPage" layoutX="10.0" layoutY="70.0" prefHeight="530.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" visible="false" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
          <children>
-            <JFXListView fx:id="FriendsList" layoutX="35.0" layoutY="250.0" onMouseClicked="#onMouseClickedFriendsList" prefHeight="209.0" prefWidth="329.0" style="-fx-background-color: #b3b3ff;" />
+            <JFXListView fx:id="FriendsList" layoutX="35.0" layoutY="250.0" onMouseClicked="#onMouseClickedFriendsList" prefHeight="209.0" prefWidth="329.0" style="-fx-background-color: #6b6b99;" />
             <ImageView fitHeight="30.0" fitWidth="30.0" layoutX="35.0" layoutY="471.0" onMouseClicked="#onMouseClickedPreviousPageFriends">
                <image>
                   <Image url="@../images/backward-arrow.png" />
@@ -159,7 +216,7 @@
                   <Font name="SansSerif Regular" size="17.0" />
                </font>
             </Text>
-            <JFXListView fx:id="PendingFriendsList" layoutX="37.0" layoutY="36.0" onMouseClicked="#onMouseClickedPendingFriendsList" prefHeight="157.0" prefWidth="329.0" style="-fx-background-color: #b3b3ff;" />
+            <JFXListView fx:id="PendingFriendsList" layoutX="37.0" layoutY="36.0" onMouseClicked="#onMouseClickedPendingFriendsList" prefHeight="157.0" prefWidth="329.0" style="-fx-background-color: #6b6b99;" />
             <ImageView fitHeight="30.0" fitWidth="30.0" layoutX="37.0" layoutY="193.0" onMouseClicked="#onMouseClickedPreviousPagePendingFriends">
                <image>
                   <Image url="@../images/backward-arrow.png" />
@@ -185,12 +242,12 @@
       </AnchorPane>
       <AnchorPane fx:id="SearchPage" layoutX="10.0" layoutY="70.0" prefHeight="530.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" visible="false" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
          <children>
-            <JFXTextArea fx:id="SearchText" focusColor="#5d84f8" labelFloat="true" layoutX="300.0" layoutY="14.0" onKeyTyped="#onKeyTypedSearchText" prefHeight="38.0" prefWidth="339.0" promptText="Search" style="-fx-border-radius: 10px;" unFocusColor="#abafee" AnchorPane.bottomAnchor="472.0" AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="20.0">
+            <JFXTextArea fx:id="SearchText" focusColor="#5d84f8" labelFloat="true" layoutX="30.0" layoutY="21.0" onKeyTyped="#onKeyTypedSearchText" prefHeight="38.0" prefWidth="339.0" style="-fx-border-radius: 10px; -fx-background-color: #6b6b99;" unFocusColor="#abafee" AnchorPane.bottomAnchor="471.0" AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="21.0">
                <font>
                   <Font size="18.0" />
                </font></JFXTextArea>
-            <JFXListView fx:id="SearchList" layoutX="36.0" layoutY="81.0" onMouseClicked="#onMouseClickedSearchList" prefHeight="407.0" prefWidth="329.0" style="-fx-background-color: #b3b3ff;" AnchorPane.leftAnchor="35.0" AnchorPane.rightAnchor="35.0" />
-            <ImageView fitHeight="30.0" fitWidth="30.0" layoutX="30.0" layoutY="488.0" onMouseClicked="#onMouseClickedPreviousPageSearchPage">
+            <JFXListView fx:id="SearchList" layoutX="36.0" layoutY="89.0" onMouseClicked="#onMouseClickedSearchList" prefHeight="399.0" prefWidth="329.0" style="-fx-background-color: #6b6b99;" AnchorPane.leftAnchor="35.0" AnchorPane.rightAnchor="35.0" />
+            <ImageView fitHeight="25.0" fitWidth="25.0" layoutX="35.0" layoutY="491.0" onMouseClicked="#onMouseClickedPreviousPageSearchPage">
                <image>
                   <Image url="@../images/backward-arrow.png" />
                </image>
@@ -198,7 +255,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </ImageView>
-            <ImageView fitHeight="30.0" fitWidth="30.0" layoutX="339.0" layoutY="488.0" onMouseClicked="#onMouseClickedNextPageSearchPage">
+            <ImageView fitHeight="25.0" fitWidth="25.0" layoutX="339.0" layoutY="491.0" onMouseClicked="#onMouseClickedNextPageSearchPage">
                <image>
                   <Image url="@../images/forward-arrow.png" />
                </image>
@@ -210,17 +267,17 @@
       </AnchorPane>
       <AnchorPane fx:id="ProfilePageAnchor" prefHeight="530.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" visible="false" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
          <children>
-            <Button fx:id="ProfilePageAddFriendButton" layoutX="290.0" layoutY="119.0" mnemonicParsing="false" onMouseClicked="#onProfilePageAddFriendButtonClicked" prefWidth="75.0" text="Add Friend">
+            <Button fx:id="ProfilePageAddFriendButton" layoutX="290.0" layoutY="119.0" mnemonicParsing="false" onMouseClicked="#onProfilePageAddFriendButtonClicked" prefWidth="75.0" style="-fx-background-color: #59597f;" text="Add Friend">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
             <ImageView layoutX="147.0" layoutY="79.0">
                <image>
-                  <Image url="@../images/icons8_male_user_104px.png" />
+                  <Image url="@../images/profile_icon.png" />
                </image>
             </ImageView>
-            <ListView fx:id="ProfilePageFriendsList" layoutX="21.0" layoutY="213.0" prefHeight="303.0" prefWidth="191.0" />
+            <ListView fx:id="ProfilePageFriendsList" layoutX="15.0" layoutY="213.0" onMouseClicked="#onMouseClickedProfilePageFriendsList" prefHeight="303.0" prefWidth="173.0" style="-fx-background-color: #6b6b99;" />
             <Text fx:id="ProfilePageName" fill="#6b6a6a" layoutX="16.0" layoutY="31.0" strokeType="OUTSIDE" strokeWidth="0.0" text="First + Last Name" textAlignment="CENTER" wrappingWidth="369.0">
                <font>
                   <Font name="SansSerif Regular" size="27.0" />
@@ -231,16 +288,144 @@
                   <Font name="SansSerif Bold" size="20.0" />
                </font>
             </Text>
-            <Text fill="#6b6a6a" layoutX="21.0" layoutY="206.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Friends" textAlignment="CENTER" wrappingWidth="191.0">
+            <Text fill="#6b6a6a" layoutX="18.0" layoutY="200.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Friends" textAlignment="CENTER" wrappingWidth="166.9830722808838">
                <font>
                   <Font name="SansSerif Regular" size="17.0" />
                </font>
             </Text>
-            <Button fx:id="ProfilePageRejectFriendButton" layoutX="290.0" layoutY="138.0" mnemonicParsing="false" onMouseClicked="#onProfilePageRejectFriendButtonClicked" prefHeight="25.0" prefWidth="75.0" text="Reject" visible="false">
+            <Button fx:id="ProfilePageRejectFriendButton" layoutX="290.0" layoutY="138.0" mnemonicParsing="false" onMouseClicked="#onProfilePageRejectFriendButtonClicked" prefHeight="25.0" prefWidth="75.0" style="-fx-background-color: #59597f;" text="Reject" visible="false">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
+            <ListView fx:id="ProfilePageEventsList" layoutX="213.0" layoutY="213.0" onMouseClicked="#onMouseClickedProfilePageEventsList" prefHeight="303.0" prefWidth="173.0" style="-fx-background-color: #6b6b99;" />
+            <Text fill="#6b6a6a" layoutX="213.0" layoutY="201.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Events" textAlignment="CENTER" wrappingWidth="173.0">
+               <font>
+                  <Font name="SansSerif Regular" size="17.0" />
+               </font>
+            </Text>
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="EventPage" layoutY="60.0" prefHeight="530.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" visible="false">
+         <children>
+            <Button fx:id="EventPageSignButton" layoutX="162.0" layoutY="240.0" mnemonicParsing="false" onMouseClicked="#onEventPageSignButtonClicked" prefWidth="75.0" style="-fx-background-color: #59597f;" text="Sign Up">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <ListView fx:id="EventPageParticipantsList" layoutX="31.0" layoutY="305.0" prefHeight="209.0" prefWidth="339.0" style="-fx-background-color: #6b6b99;" />
+            <Text fx:id="EventPageName" fill="#6b6a6a" layoutX="16.0" layoutY="31.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Name" textAlignment="CENTER" wrappingWidth="369.0">
+               <font>
+                  <Font name="SansSerif Regular" size="27.0" />
+               </font>
+            </Text>
+            <Text fx:id="EventPageLocation" fill="#6b6a6a" layoutX="30.0" layoutY="109.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Location:" wrappingWidth="339.0">
+               <font>
+                  <Font name="SansSerif Regular" size="18.0" />
+               </font>
+            </Text>
+            <Text fill="#6b6a6a" layoutX="75.0" layoutY="290.0" scaleX="1.3" scaleY="1.3" scaleZ="1.3" smooth="false" strokeType="OUTSIDE" strokeWidth="0.0" text="Participants" textAlignment="CENTER" wrappingWidth="251.0">
+               <font>
+                  <Font name="SansSerif Regular" size="18.0" />
+               </font>
+            </Text>
+            <Text fx:id="EventPageDescription" fill="#6b6a6a" layoutX="31.0" layoutY="151.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Description:" wrappingWidth="339.0">
+               <font>
+                  <Font name="SansSerif Regular" size="18.0" />
+               </font>
+            </Text>
+            <Text fx:id="EventPageDate" fill="#6b6a6a" layoutX="30.0" layoutY="67.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Date:" wrappingWidth="339.0">
+               <font>
+                  <Font name="SansSerif Regular" size="18.0" />
+               </font>
+            </Text>
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="EventsListPage" layoutY="60.0" prefHeight="530.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" visible="false">
+         <children>
+            <ImageView fitHeight="25.0" fitWidth="30.0" layoutX="339.0" layoutY="2.0" onMousePressed="#handleAddEventPage" preserveRatio="true">
+               <image>
+                  <Image url="@../images/plus_icon.jpg" />
+               </image>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </ImageView>
+            <Text fx:id="EventPageName1" fill="#6b6a6a" layoutX="25.0" layoutY="23.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Events" textAlignment="CENTER" wrappingWidth="293.9830722808838">
+               <font>
+                  <Font name="SansSerif Regular" size="27.0" />
+               </font>
+            </Text>
+            <JFXListView fx:id="EventsList" layoutX="25.0" layoutY="32.0" onMouseClicked="#onMouseClickedEventsList" prefHeight="486.0" prefWidth="339.0" style="-fx-background-color: #6b6b99;" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="35.0" />
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="EventAddPage" layoutY="60.0" prefHeight="530.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" visible="false">
+         <children>
+            <TextArea fx:id="AddEventName" layoutX="95.0" layoutY="67.0" prefHeight="49.0" prefWidth="209.0" promptText="Name" style="-fx-background-color: #6b6b99;" wrapText="true">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </TextArea>
+            <ImageView fitHeight="49.0" fitWidth="49.0" layoutX="175.0" layoutY="426.0" onMousePressed="#handleAddEvent" preserveRatio="true">
+               <image>
+                  <Image url="@../images/plus_icon.jpg" />
+               </image>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </ImageView>
+            <Text fill="#6b6a6a" layoutX="24.0" layoutY="38.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Add New Event" textAlignment="CENTER" wrappingWidth="350.9830722808838">
+               <font>
+                  <Font name="SansSerif Regular" size="27.0" />
+               </font>
+            </Text>
+            <TextArea fx:id="AddEventLocation" layoutX="95.0" layoutY="129.0" prefHeight="25.0" prefWidth="209.0" promptText="Location" style="-fx-background-color: #6b6b99;" wrapText="true">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </TextArea>
+            <TextArea fx:id="AddEventDescription" layoutX="95.0" layoutY="183.0" prefHeight="151.0" prefWidth="209.0" promptText="Description" style="-fx-background-color: #6b6b99;" wrapText="true">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </TextArea>
+            <TextArea fx:id="AddEventTime" layoutX="95.0" layoutY="345.0" prefHeight="25.0" prefWidth="209.0" promptText="Date (format YYYY-MM-DD HH:MM)" style="-fx-background-color: #6b6b99;" wrapText="true">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </TextArea>
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="ChatAddPage" layoutY="60.0" prefHeight="530.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" visible="false">
+         <children>
+            <ImageView fitHeight="49.0" fitWidth="49.0" layoutX="175.0" layoutY="276.0" onMousePressed="#handleAddChat" preserveRatio="true">
+               <image>
+                  <Image url="@../images/plus_icon.jpg" />
+               </image>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </ImageView>
+            <Text fill="#6b6a6a" layoutX="24.0" layoutY="38.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Add New Chat" textAlignment="CENTER" wrappingWidth="350.9830722808838">
+               <font>
+                  <Font name="SansSerif Regular" size="27.0" />
+               </font>
+            </Text>
+            <TextArea fx:id="AddChatUsernames" layoutX="95.0" layoutY="83.0" prefHeight="151.0" prefWidth="209.0" promptText="Usernames (type the usernames separated with ;)" style="-fx-background-color: #6b6b99;" wrapText="true">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </TextArea>
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="NotificationsPage" layoutY="60.0" prefHeight="530.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" visible="false">
+         <children>
+            <ListView fx:id="NotificationsList" layoutX="30.0" layoutY="48.0" prefHeight="469.0" prefWidth="339.0" style="-fx-background-color: #6b6b99;" />
+            <Text fill="#6b6a6a" layoutX="24.0" layoutY="38.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Notifications" textAlignment="CENTER" wrappingWidth="350.9830722808838">
+               <font>
+                  <Font name="SansSerif Regular" size="27.0" />
+               </font>
+            </Text>
          </children>
       </AnchorPane>
    </children>

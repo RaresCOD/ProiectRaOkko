@@ -2,8 +2,10 @@
 
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXCheckBox?>
-<?import com.jfoenix.controls.JFXTextArea?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -14,88 +16,111 @@
    <children>
       <AnchorPane fx:id="LoginPage" layoutX="10.0" layoutY="10.0" prefHeight="650.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <ImageView layoutX="147.0" layoutY="96.0">
+            <ImageView fitHeight="105.0" fitWidth="95.0" layoutX="152.0" layoutY="97.0" preserveRatio="true">
                <image>
-                  <Image url="@../images/icons8_male_user_104px.png" />
+                  <Image url="@../images/profile_icon.png" />
                </image>
             </ImageView>
-            <JFXTextArea fx:id="username" focusColor="#5d84f8" labelFloat="true" layoutX="101.0" layoutY="286.0" prefHeight="30.0" prefWidth="195.0" promptText="Username" unFocusColor="#abafee">
-               <font>
-                  <Font name="SansSerif Regular" size="12.0" />
-               </font>
-            </JFXTextArea>
-            <JFXTextArea fx:id="password" accessibleRole="PASSWORD_FIELD" focusColor="#5d84f8" labelFloat="true" layoutX="101.0" layoutY="352.0" onKeyTyped="#changeValue" prefHeight="38.0" prefWidth="195.0" promptText="Password" styleClass="a" unFocusColor="#abafee">
-               <font>
-                  <Font name="SansSerif Regular" size="12.0" />
-               </font>
-            </JFXTextArea>
-            <JFXCheckBox fx:id="VP" layoutX="138.0" layoutY="413.0" onAction="#togglevisiblePassrod" text="Show password" />
+            <JFXCheckBox fx:id="VP" layoutX="138.0" layoutY="413.0" onAction="#toggleVisiblePassword" text="Show password">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor></JFXCheckBox>
             <Label layoutX="121.0" layoutY="200.0" text="Welcome" textAlignment="CENTER" textFill="#6b6a6a">
                <font>
                   <Font name="SansSerif Regular" size="37.0" />
                </font>
             </Label>
-            <JFXButton buttonType="RAISED" layoutX="78.0" layoutY="457.0" onAction="#handleLoginButton" prefHeight="38.0" prefWidth="229.0" style="-fx-background-radius: 3em; -fx-border-radius: 3em; -fx-background-color: #6666ff;" text="Login" />
-            <Label layoutX="152.0" layoutY="590.0" text="Forgot password?" />
-            <Label layoutX="177.0" layoutY="619.0" onMouseClicked="#handleOpenRegister" text="Register" />
+            <JFXButton buttonType="RAISED" layoutX="78.0" layoutY="457.0" onAction="#handleLoginButton" prefHeight="38.0" prefWidth="229.0" style="-fx-background-radius: 3em; -fx-border-radius: 3em; -fx-background-color: #6666ff;" text="Login">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor></JFXButton>
+            <Label layoutX="177.0" layoutY="619.0" onMouseClicked="#handleOpenRegister" text="Register">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor></Label>
             <ImageView layoutX="56.0" layoutY="289.0">
                <image>
-                  <Image url="@../images/icons8_customer_32px.png" />
+                  <Image url="@../images/profile.png" />
                </image>
             </ImageView>
             <ImageView fitHeight="38.0" fitWidth="32.0" layoutX="56.0" layoutY="353.0">
                <image>
-                  <Image url="@../images/icons8_lock_60px.png" />
+                  <Image url="@../images/lock.png" />
                </image>
             </ImageView>
             <Text fx:id="errorText" fill="#f85c5c" layoutX="78.0" layoutY="272.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="242.0" />
+            <PasswordField fx:id="password" layoutX="101.0" layoutY="356.0" prefHeight="32.0" prefWidth="195.0" promptText="Password" style="-fx-background-color: #6b6b99;">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </PasswordField>
+            <TextField fx:id="username" layoutX="101.0" layoutY="289.0" prefHeight="32.0" prefWidth="195.0" promptText="Username" style="-fx-background-color: #6b6b99;">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor></TextField>
+            <TextField fx:id="passwordVisible" layoutX="101.0" layoutY="356.0" prefHeight="32.0" prefWidth="195.0" promptText="Password" style="-fx-background-color: #6b6b99;" visible="false">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor></TextField>
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="RegisterPage" layoutX="10.0" layoutY="10.0" prefHeight="650.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <AnchorPane fx:id="RegisterPage" layoutX="10.0" layoutY="10.0" prefHeight="650.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <ImageView layoutX="147.0" layoutY="96.0">
+            <PasswordField fx:id="passwordRegister" layoutX="97.0" layoutY="461.0" prefHeight="32.0" prefWidth="195.0" promptText="Password" style="-fx-background-color: #6b6b99;">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </PasswordField>
+            <TextField fx:id="usernameRegister" layoutX="97.0" layoutY="407.0" prefHeight="32.0" prefWidth="195.0" promptText="Username" style="-fx-background-color: #6b6b99;">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor></TextField>
+            <ImageView layoutX="143.0" layoutY="96.0">
                <image>
-                  <Image url="@../images/icons8_male_user_104px.png" />
+                  <Image url="@../images/profile_icon.png" />
                </image>
             </ImageView>
-            <JFXTextArea fx:id="username1" focusColor="#5d84f8" labelFloat="true" layoutX="101.0" layoutY="411.0" prefHeight="30.0" prefWidth="195.0" promptText="Username" unFocusColor="#abafee">
-               <font>
-                  <Font name="SansSerif Regular" size="12.0" />
-               </font>
-            </JFXTextArea>
-            <JFXTextArea fx:id="password1" accessibleRole="PASSWORD_FIELD" focusColor="#5d84f8" labelFloat="true" layoutX="105.0" layoutY="479.0" onKeyTyped="#changeValue1" prefHeight="38.0" prefWidth="195.0" promptText="Password" styleClass="a" unFocusColor="#abafee">
-               <font>
-                  <Font name="SansSerif Regular" size="12.0" />
-               </font>
-            </JFXTextArea>
-            <JFXCheckBox fx:id="VP1" layoutX="148.0" layoutY="538.0" onAction="#togglevisiblePassrod1" text="Show password" />
-            <Label layoutX="121.0" layoutY="200.0" text="Welcome" textAlignment="CENTER" textFill="#6b6a6a">
+            <JFXCheckBox fx:id="VPRegister" layoutX="141.0" layoutY="504.0" onAction="#toggleVisiblePasswordRegister" text="Show password">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor></JFXCheckBox>
+            <Label layoutX="117.0" layoutY="200.0" text="Welcome" textAlignment="CENTER" textFill="#6b6a6a">
                <font>
                   <Font name="SansSerif Regular" size="37.0" />
                </font>
             </Label>
-            <JFXButton buttonType="RAISED" layoutX="87.0" layoutY="576.0" onAction="#handleRegisterButton" prefHeight="38.0" prefWidth="229.0" style="-fx-background-radius: 3em; -fx-border-radius: 3em; -fx-background-color: #6666ff;" text="Register" />
-            <ImageView layoutX="56.0" layoutY="413.0">
+            <JFXButton buttonType="RAISED" layoutX="80.0" layoutY="547.0" onAction="#handleRegisterButton" prefHeight="38.0" prefWidth="229.0" style="-fx-background-radius: 3em; -fx-border-radius: 3em; -fx-background-color: #6666ff;" text="Register">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor></JFXButton>
+            <ImageView layoutX="56.0" layoutY="407.0">
                <image>
-                  <Image url="@../images/icons8_customer_32px.png" />
+                  <Image url="@../images/profile.png" />
                </image>
             </ImageView>
-            <ImageView fitHeight="38.0" fitWidth="32.0" layoutX="56.0" layoutY="479.0">
+            <ImageView fitHeight="38.0" fitWidth="32.0" layoutX="56.0" layoutY="458.0">
                <image>
-                  <Image url="@../images/icons8_lock_60px.png" />
+                  <Image url="@../images/lock.png" />
                </image>
             </ImageView>
-            <Text fx:id="errorText1" fill="#f85c5c" layoutX="78.0" layoutY="272.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="242.0" />
-            <JFXTextArea fx:id="firstname" focusColor="#5d84f8" labelFloat="true" layoutX="101.0" layoutY="275.0" prefHeight="30.0" prefWidth="242.0" promptText="First Name" unFocusColor="#abafee">
-               <font>
-                  <Font name="SansSerif Regular" size="12.0" />
-               </font>
-            </JFXTextArea>
-            <JFXTextArea fx:id="lastname" focusColor="#5d84f8" labelFloat="true" layoutX="101.0" layoutY="337.0" prefHeight="30.0" prefWidth="195.0" promptText="Last Name" unFocusColor="#abafee">
-               <font>
-                  <Font name="SansSerif Regular" size="12.0" />
-               </font>
-            </JFXTextArea>
+            <Text fx:id="errorTextRegister" fill="#f85c5c" layoutX="78.0" layoutY="272.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="242.0" />
+            <Label layoutX="180.0" layoutY="610.0" onMouseClicked="#handleOpenLogin" text="Login">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Label>
+            <TextField fx:id="firstname" layoutX="97.0" layoutY="293.0" prefHeight="32.0" prefWidth="195.0" promptText="First Name" style="-fx-background-color: #6b6b99;">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor></TextField>
+            <TextField fx:id="lastname" layoutX="97.0" layoutY="351.0" prefHeight="32.0" prefWidth="195.0" promptText="Last Name" style="-fx-background-color: #6b6b99;">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor></TextField>
+            <TextField fx:id="passwordRegisterVisible" layoutX="97.0" layoutY="461.0" prefHeight="32.0" prefWidth="195.0" promptText="Password" style="-fx-background-color: #6b6b99;" visible="false">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor></TextField>
          </children>
       </AnchorPane>
    </children>

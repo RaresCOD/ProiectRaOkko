@@ -1,6 +1,7 @@
 package ro.ubbcluj.map.proiectraokko4.service;
 
 import ro.ubbcluj.map.proiectraokko4.Message.Message;
+import ro.ubbcluj.map.proiectraokko4.domain.Event;
 import ro.ubbcluj.map.proiectraokko4.domain.Prietenie;
 import ro.ubbcluj.map.proiectraokko4.domain.Tuple;
 import ro.ubbcluj.map.proiectraokko4.domain.Utilizator;
@@ -19,47 +20,23 @@ import java.util.*;
 
 public class MessageService implements Observable {
 
-    PagingRepository<Long, Message> messagesRepo;
+    Repository<Long, Message> messagesRepo;
     PagingRepository<Long, Utilizator> userRepo;
 
-    public MessageService(PagingRepository<Long, Utilizator> userRepo, PagingRepository<Long, Message> messagesRepo) {
+    public MessageService(PagingRepository<Long, Utilizator> userRepo, Repository<Long, Message> messagesRepo) {
         this.userRepo = userRepo;
         this.messagesRepo = messagesRepo;
     }
 
-    public void addMessage(Long id1, Long id2, String msg) {
+    public void addMessage(Long id1, List<Long> Listid, String msg) {
         Utilizator from = userRepo.findOne(id1);
-        Utilizator user2 = userRepo.findOne(id2);
         List<Utilizator> to = new ArrayList<Utilizator>();
-        to.add(user2);
+        Listid.stream().forEach(x -> to.add(userRepo.findOne(x)));
+
         Message message = new Message(from, to, msg);
         message.setReplyMsg(null);
         message.setData(LocalDateTime.now());
-        try {
-            messagesRepo.save(message);
-        } catch (ValidationException e) {
-            System.out.println(e);
-        }
-        notifyObservers();
-    }
-
-    public void addGroupMessage(Long id1, List<Long> Listid, String msg) {
-        Utilizator from = userRepo.findOne(id1);
-        List<Utilizator> to = new ArrayList<Utilizator>();
-        Listid
-                .stream()
-                .forEach(x -> to.add(userRepo.findOne(x)));
-//        Utilizator user2 = userRepo.findOne(id2);
-
-//        to.add(user2);
-        Message message = new Message(from, to, msg);
-        message.setReplyMsg(null);
-        message.setData(LocalDateTime.now());
-        try {
-            messagesRepo.save(message);
-        } catch (ValidationException e) {
-            System.out.println(e);
-        }
+        messagesRepo.save(message);
         notifyObservers();
     }
 
@@ -114,46 +91,31 @@ public class MessageService implements Observable {
         }
     }
 
-    public void sendReply(Long msgId, Long userId, String msg) {
-        Utilizator from = userRepo.findOne(userId);
-        Message message = messagesRepo.findOne(msgId);
-        List<Utilizator> to = new ArrayList<>();
-        to.add(message.getFrom());
-        for(Utilizator curent: message.getTo()) {
-            if(curent.getId() != userId) {
-                to.add(curent);
-            }
-        }
-        Message newReply = new Message(from, to, msg);
-        newReply.setReplyMsg(message);
-        newReply.setData(LocalDateTime.now());
-        try{
-            messagesRepo.save(newReply);
-        } catch (ValidationException e) {
-            System.out.println(e);
-        }
-        notifyObservers();
-    }
-
     public static <T> boolean listEqualsIgnoreOrder(List<T> list1, List<T> list2) {
         return new HashSet<>(list1).equals(new HashSet<>(list2));
     }
 
-    public List<Message> findMsgs(Long userId, Long curentId) {
-        List<Message> allMsg = messagesRepo.findAll();
-        List<Utilizator> userList = new ArrayList<>();
-        userList.add(userRepo.findOne(userId));
-        userList.add(userRepo.findOne(curentId));
-        List<Message> rezultat = new ArrayList<>();
-        for(Message curent : allMsg) {
-            List<Utilizator> to = curent.getTo();
-            Utilizator from = curent.getFrom();
-            to.add(from);
-            if (listEqualsIgnoreOrder(to, userList) == true) {
-                rezultat.add(curent);
+    public List<Message> findMsgs(List<Long> userIds) {
+        List<Message> rez = new ArrayList<>();
+        List<Message> messages = messagesRepo.findAll();
+        for(Message message : messages)
+        {
+            List<Long> toUsersIds = message.getTo().stream().map(x->x.getId()).toList();
+            List<Long> toUsersIdsM = new ArrayList<>();
+            toUsersIdsM.addAll(toUsersIds);
+            toUsersIdsM.add(message.getFrom().getId());
+            if(listEqualsIgnoreOrder(toUsersIdsM, userIds) && message.getMsg() != null)
+            {
+                rez.add(message);
             }
         }
-        return rezultat;
+        rez = rez.stream().sorted(new Comparator<Message>() {
+            @Override
+            public int compare(Message e1, Message e2) {
+                return e1.getData().compareTo(e2.getData());
+            }
+        }).toList();
+        return rez;
     }
 
     public List<String> allChats(Long userId) {
@@ -179,28 +141,19 @@ public class MessageService implements Observable {
                 String grup = group.stream()
                         .filter(x -> x.getId() != userId)
                         .map(x -> x.getUsername())
-                        .reduce("", (u,v) -> u.concat(v + " "));
+                        .reduce("", (u,v) -> u.concat(v + ";"));
 
                 rezBun.add(grup);
             }
 
         }
+        rezBun = rezBun.stream().sorted(new Comparator<String>() {
+            @Override
+            public int compare(String e1, String e2) {
+                return e1.compareTo(e2);
+            }
+        }).toList();
         return rezBun;
-    }
-
-    private int pageNumber = 0;
-    private int pageSize = 3;
-
-    public List<Message> getNextMessages() {
-        this.pageNumber++;
-        return getMessagesOnPage(this.pageNumber);
-    }
-
-    public List<Message> getMessagesOnPage(int page) {
-        this.pageNumber = page;
-        Pageable pageable = new PageableImplementation(page, this.pageSize);
-        Page<Message> messagesPage = messagesRepo.findAll(pageable);
-        return messagesPage.getContent().toList();
     }
 
     private List<Observer> observers=new ArrayList<>();

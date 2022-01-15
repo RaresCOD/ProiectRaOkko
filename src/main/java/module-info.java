@@ -2,6 +2,7 @@ module ro.ubbcluj.map.proiectraokko4 {
     requires javafx.controls;
     requires com.jfoenix;
     requires javafx.fxml;
+    requires org.apache.pdfbox;
 
     requires org.controlsfx.controls;
     requires com.dlsc.formsfx;

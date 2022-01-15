@@ -1,6 +1,7 @@
 package ro.ubbcluj.map.proiectraokko4;
 
 import com.jfoenix.controls.JFXCheckBox;
+import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -10,7 +11,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -20,9 +23,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import ro.ubbcluj.map.proiectraokko4.domain.Utilizator;
 import ro.ubbcluj.map.proiectraokko4.domain.validators.ValidationException;
-import ro.ubbcluj.map.proiectraokko4.service.FriendshipService;
-import ro.ubbcluj.map.proiectraokko4.service.MessageService;
-import ro.ubbcluj.map.proiectraokko4.service.UtilizatorService;
+import ro.ubbcluj.map.proiectraokko4.service.*;
 import ro.ubbcluj.map.proiectraokko4.utils.Crypt;
 
 import java.io.IOException;
@@ -32,39 +33,34 @@ public class LoginController_v2 {
     UtilizatorService userService;
     FriendshipService friendshipService;
     MessageService messageService;
-
-    private String pass = "", passReg = "";
+    EventService eventService;
+    RefreshThreadService refreshService;
 
     @FXML
     private AnchorPane LoginPage, RegisterPage;
     @FXML
-    private TextArea username, password, username1, password1, firstname, lastname;
+    private TextField username, usernameRegister, firstname, lastname, passwordVisible, passwordRegisterVisible;
     @FXML
-    private Text errorText;
+    private Text errorText, errorTextRegister;
     @FXML
-    private JFXCheckBox VP, VP1;
+    private JFXCheckBox VP, VPRegister;
+    @FXML
+    private PasswordField password, passwordRegister;
 
-    public void setService(UtilizatorService userService, FriendshipService friendshipService, MessageService messageService) {
+    public void setService(UtilizatorService userService, FriendshipService friendshipService, MessageService messageService, EventService eventService, RefreshThreadService refreshService) {
         this.userService = userService;
         this.friendshipService = friendshipService;
         this.messageService = messageService;
+        this.eventService = eventService;
+        this.refreshService = refreshService;
         LoginPage.setVisible(true);
         RegisterPage.setVisible(false);
     }
 
-    private void hidePassword() {
-
-    }
-
-    void initialize() {
-    }
-
-
-
     public void handleLoginButton(ActionEvent actionEvent) {
         String userName = username.getText();
-        Long id = userService.Login(userName, pass);
-        if( id != null) {
+        Long id = userService.Login(userName, password.getText());
+        if(id != null) {
             try {
                 FXMLLoader fxmlLoader = new FXMLLoader();
                 fxmlLoader.setLocation(getClass().getResource("views/home_v3.fxml"));
@@ -72,7 +68,7 @@ public class LoginController_v2 {
                 Stage stage = new Stage();
                 stage.setScene(scene);
                 UI_v2_Controller userInterface = fxmlLoader.getController();
-                userInterface.setService(userService, friendshipService, messageService, id);
+                userInterface.setService(userService, friendshipService, messageService, eventService, refreshService, id);
                 stage.show();
                 ((Node)(actionEvent.getSource())).getScene().getWindow().hide();
             } catch (IOException e) {
@@ -84,76 +80,51 @@ public class LoginController_v2 {
         }
     }
 
-    public void togglevisiblePassrod(ActionEvent actionEvent) {
+    public void toggleVisiblePassword(ActionEvent actionEvent) {
         if(VP.isSelected()){
-            password.setText(pass);
+            password.setVisible(false);
+            passwordVisible.setVisible(true);
+            passwordVisible.setText(password.getText());
         } else {
-            String rez = "";
-            for(int i=0;i<pass.length();i++)
-                rez += "*";
-            password.setText(rez);
+            password.setVisible(true);
+            passwordVisible.setVisible(false);
+            password.setText(passwordVisible.getText());
         }
     }
 
-    public void changeValue(KeyEvent keyEvent) {
-        String ch = keyEvent.getCharacter();
-        if(keyEvent.getCode() == KeyCode.BACK_SPACE) {
-            if(pass.length()>0) {
-                StringBuffer sb= new StringBuffer(pass);
-                sb.deleteCharAt(sb.length()-1);
-                pass = sb.toString();
-            }
+    public void toggleVisiblePasswordRegister(ActionEvent actionEvent) {
+        if(VPRegister.isSelected()){
+            passwordRegister.setVisible(false);
+            passwordRegisterVisible.setVisible(true);
+            passwordRegisterVisible.setText(passwordRegister.getText());
         } else {
-            pass+=ch;
-        }
-
-        String rez = "";
-        for(int i=0;i<pass.length();i++)
-            rez += "*";
-        password.setText(rez);
-    }
-    public void togglevisiblePassrod1(ActionEvent actionEvent) {
-        if(VP1.isSelected()){
-            password1.setText(passReg);
-        } else {
-            String rez = "";
-            for(int i=0;i<passReg.length();i++)
-                rez += "*";
-            password1.setText(rez);
+            passwordRegister.setVisible(true);
+            passwordRegisterVisible.setVisible(false);
+            passwordRegister.setText(passwordRegisterVisible.getText());
         }
     }
-
-    public void changeValue1(KeyEvent keyEvent) {
-        String ch = keyEvent.getCharacter();
-        if(keyEvent.getCode().equals(KeyCode.BACK_SPACE)) {
-            if(passReg.length()>0) {
-                StringBuffer sb= new StringBuffer(passReg);
-                sb.deleteCharAt(sb.length()-1);
-                passReg = sb.toString();
-            }
-        } else {
-            passReg+=ch;
-        }
-
-        String rez = "";
-        for(int i=0;i<passReg.length();i++)
-            rez += "*";
-        password1.setText(rez);
-    }
-
-    public void handleOpenRegister(MouseEvent mouseEvent) {
+    
+    public void handleOpenRegister(MouseEvent event) {
         LoginPage.setVisible(false);
         RegisterPage.setVisible(true);
+    }
+
+    public void handleOpenLogin(MouseEvent event){
+        LoginPage.setVisible(true);
+        RegisterPage.setVisible(false);
     }
 
     public void handleRegisterButton(ActionEvent actionEvent) {
         String firstName = firstname.getText();
         String lastName = lastname.getText();
-        String username = username1.getText();
+        String username = usernameRegister.getText();
+        String pass;
+        if(VPRegister.isSelected()) pass = passwordRegisterVisible.getText();
+        else pass = passwordRegister.getText();
         try{
             String salt = Crypt.gensalt(12);
-            passReg = Crypt.hashpw(passReg, salt);
-            Utilizator user = userService.addUtilizator(username, firstName, lastName, passReg);
+            pass = Crypt.hashpw(pass, salt);
+            Utilizator user = userService.addUtilizator(username, firstName, lastName, pass);
             try {
                 FXMLLoader fxmlLoader = new FXMLLoader();
                 fxmlLoader.setLocation(getClass().getResource("views/home_v3.fxml"));
@@ -161,14 +132,15 @@ public class LoginController_v2 {
                 Stage stage = new Stage();
                 stage.setScene(scene);
                 UI_v2_Controller userInterface = fxmlLoader.getController();
-                userInterface.setService(userService, friendshipService, messageService, user.getId());
+                userInterface.setService(userService, friendshipService, messageService, eventService, refreshService, user.getId());
+                stage.setResizable(false);
                 stage.show();
                 ((Node)(actionEvent.getSource())).getScene().getWindow().hide();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         } catch (ValidationException e) {
-            e.printStackTrace();
+            errorTextRegister.setText(e.getMessage());
         }
     }
 }
