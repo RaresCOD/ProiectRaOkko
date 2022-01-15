@@ -7,7 +7,7 @@ import java.util.Objects;
 /**
  * User class
  */
-public class Utilizator extends Entity<Long>{
+public class User extends Entity<Long>{
     private String username;
     /**
      * firstname
@@ -20,7 +20,7 @@ public class Utilizator extends Entity<Long>{
     /**
      * friends
      */
-    private List<Utilizator> friends = new ArrayList<Utilizator>();
+    private List<User> friends = new ArrayList<User>();
     private String password;
 
     public String getPassword() {
@@ -32,7 +32,7 @@ public class Utilizator extends Entity<Long>{
      * @param firstName fn
      * @param lastName ln
      */
-    public Utilizator(String username, String firstName, String lastName, String password) {
+    public User(String username, String firstName, String lastName, String password) {
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -91,7 +91,7 @@ public class Utilizator extends Entity<Long>{
      *
      * @return all friends
      */
-    public List<Utilizator> getFriends() {
+    public List<User> getFriends() {
         return friends;
     }
 
@@ -99,7 +99,7 @@ public class Utilizator extends Entity<Long>{
      *
      * @param e user
      */
-    public void addFriend(Utilizator e) {
+    public void addFriend(User e) {
         this.friends.add(e);
     }
 
@@ -107,7 +107,7 @@ public class Utilizator extends Entity<Long>{
      *
      * @param e user
      */
-    public void deleteFriend(Utilizator e) {
+    public void deleteFriend(User e) {
         friends.remove(e);
     }
 
@@ -119,8 +119,8 @@ public class Utilizator extends Entity<Long>{
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Utilizator)) return false;
-        Utilizator that = (Utilizator) o;
+        if (!(o instanceof User)) return false;
+        User that = (User) o;
         return getFirstName().equals(that.getFirstName()) &&
                 getLastName().equals(that.getLastName()) &&
                 getFriends().equals(that.getFriends());

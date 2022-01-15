@@ -1,18 +1,12 @@
 package ro.ubbcluj.map.proiectraokko4.service;
 
-import ro.ubbcluj.map.proiectraokko4.Conexitate.DFS;
 import ro.ubbcluj.map.proiectraokko4.domain.*;
-import ro.ubbcluj.map.proiectraokko4.domain.validators.ValidationException;
 import ro.ubbcluj.map.proiectraokko4.repository.Repository;
-import ro.ubbcluj.map.proiectraokko4.repository.paging.Page;
-import ro.ubbcluj.map.proiectraokko4.repository.paging.Pageable;
-import ro.ubbcluj.map.proiectraokko4.repository.paging.PageableImplementation;
 import ro.ubbcluj.map.proiectraokko4.repository.paging.PagingRepository;
 import ro.ubbcluj.map.proiectraokko4.utils.observer.Observable;
 import ro.ubbcluj.map.proiectraokko4.utils.observer.Observer;
 import ro.ubbcluj.map.proiectraokko4.utils.observer.TypeOfObservation;
 
-import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,7 +14,7 @@ import java.util.List;
 
 public class EventService implements Observable {
 
-    PagingRepository<Long, Utilizator> userRepo;
+    PagingRepository<Long, User> userRepo;
     Repository<Long, Event> eventRepo;
 
     /**
@@ -28,7 +22,7 @@ public class EventService implements Observable {
      * @param userRepo user repo
      * @param eventRepo event repo
      */
-    public EventService(PagingRepository<Long, Utilizator> userRepo, Repository<Long, Event> eventRepo) {
+    public EventService(PagingRepository<Long, User> userRepo, Repository<Long, Event> eventRepo) {
         this.userRepo = userRepo;
         this.eventRepo = eventRepo;
     }

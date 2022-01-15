@@ -5,7 +5,7 @@ import java.sql.Date;
 /**
  * friendship class
  */
-public class Prietenie extends Entity<Tuple<Long,Long>> {
+public class Friendship extends Entity<Tuple<Long,Long>> {
 
     /**
      * date
@@ -16,11 +16,11 @@ public class Prietenie extends Entity<Tuple<Long,Long>> {
     /**
      * constructor
      */
-    public Prietenie() {}
+    public Friendship() {}
 
     @Override
     public String toString() {
-        return "Prietenie{" +
+        return "Friendship{" +
                 "P1 = " + this.getId().getLeft() + ", P2 = " + this.getId().getRight() + ", date = " + date.toString() +
                 '}';
     }

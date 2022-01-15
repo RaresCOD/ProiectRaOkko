@@ -13,8 +13,7 @@ public class RefreshThreadService extends Thread implements Observable {
     public void run() {
         while(true) {
             try {
-                System.out.println("Am dat refresh");
-                sleep(3000);
+                sleep(5000);
                 notifyObservers();
             } catch (InterruptedException e) {
                 e.printStackTrace();

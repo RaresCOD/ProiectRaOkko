@@ -1,7 +1,7 @@
 package ro.ubbcluj.map.proiectraokko4.domain.validators;
 
 
-import ro.ubbcluj.map.proiectraokko4.Message.Message;
+import ro.ubbcluj.map.proiectraokko4.domain.Message;
 
 
 public class MessageValidator implements Validator<Message>{

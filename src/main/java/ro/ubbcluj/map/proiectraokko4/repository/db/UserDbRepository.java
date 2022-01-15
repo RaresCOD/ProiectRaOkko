@@ -1,9 +1,8 @@
 package ro.ubbcluj.map.proiectraokko4.repository.db;
 
 
-import ro.ubbcluj.map.proiectraokko4.domain.Utilizator;
+import ro.ubbcluj.map.proiectraokko4.domain.User;
 import ro.ubbcluj.map.proiectraokko4.domain.validators.Validator;
-import ro.ubbcluj.map.proiectraokko4.repository.Repository;
 import ro.ubbcluj.map.proiectraokko4.repository.paging.*;
 
 import java.sql.*;
@@ -13,11 +12,11 @@ import java.util.stream.StreamSupport;
 /**
  * Repo care salveaza si aduce datele din baza de date "users"
  */
-public class UtilizatorDbRepository implements PagingRepository<Long, Utilizator> {
+public class UserDbRepository implements PagingRepository<Long, User> {
     private String dbUrl;
     private String dbUsername;
     private String dbPassword;
-    private Validator<Utilizator> validator;
+    private Validator<User> validator;
 
     /**
      *
@@ -26,14 +25,14 @@ public class UtilizatorDbRepository implements PagingRepository<Long, Utilizator
      * @param dbPassword - parola pentru baza de date
      * @param validator - validator pentru utilizator
      */
-    public UtilizatorDbRepository(String dbUrl, String username, String dbPassword, Validator<Utilizator> validator) {
+    public UserDbRepository(String dbUrl, String username, String dbPassword, Validator<User> validator) {
         this.dbUrl = dbUrl;
         this.dbUsername = username;
         this.dbPassword = dbPassword;
         this.validator = validator;
     }
     @Override
-    public Utilizator findOne(Long id) {
+    public User findOne(Long id) {
         String sql = "select * from users where id = " + id;
 
         try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
@@ -44,7 +43,7 @@ public class UtilizatorDbRepository implements PagingRepository<Long, Utilizator
                String lastName = result.getString("last_name");
                String username = result.getString("username");
                String password1 = result.getString("password");
-               Utilizator utilizator = new Utilizator(username, firstName, lastName, password1);
+               User utilizator = new User(username, firstName, lastName, password1);
                utilizator.setId(id);
                String sql1 = "select friendship.id2, friendship.id1\n" +
                        "from users\n" +
@@ -74,7 +73,7 @@ public class UtilizatorDbRepository implements PagingRepository<Long, Utilizator
                                String lastName2 = resultSet1.getString("last_name");
                                String username2 = resultSet1.getString("username");
                                String password2 = resultSet1.getString("password");
-                               Utilizator utilizator1 = new Utilizator(username2, firstName2, lastName2, password2);
+                               User utilizator1 = new User(username2, firstName2, lastName2, password2);
                                utilizator1.setId(idBun);
                                utilizator.addFriend(utilizator1);
                                }
@@ -91,8 +90,8 @@ public class UtilizatorDbRepository implements PagingRepository<Long, Utilizator
     }
 
     @Override
-    public List<Utilizator> findAll() {
-        List<Utilizator> users = new ArrayList<>();
+    public List<User> findAll() {
+        List<User> users = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
              PreparedStatement statement = connection.prepareStatement("SELECT * from users");
              ResultSet resultSet = statement.executeQuery()) {
@@ -104,7 +103,7 @@ public class UtilizatorDbRepository implements PagingRepository<Long, Utilizator
                 String username = resultSet.getString("username");
                 String password = resultSet.getString("password");
 
-                Utilizator utilizator = new Utilizator(username, firstName, lastName, password);
+                User utilizator = new User(username, firstName, lastName, password);
                 utilizator.setId(id);
                 users.add(utilizator);
             }
@@ -116,7 +115,7 @@ public class UtilizatorDbRepository implements PagingRepository<Long, Utilizator
     }
 
     @Override
-    public Utilizator save(Utilizator entity) {
+    public User save(User entity) {
 
         String sql = "insert into users (username, first_name, last_name, password) values (?, ?, ?, ?)";
 
@@ -147,7 +146,7 @@ public class UtilizatorDbRepository implements PagingRepository<Long, Utilizator
                 String username = result.getString("username");
                 String password1 = result.getString("password");
                 Long id = Long.valueOf(result.getInt("id"));
-                Utilizator utilizator = new Utilizator(username, firstName, lastName, password1);
+                User utilizator = new User(username, firstName, lastName, password1);
                 utilizator.setId(id);
                 return utilizator;
             }} catch (SQLException e) {
@@ -158,7 +157,7 @@ public class UtilizatorDbRepository implements PagingRepository<Long, Utilizator
     }
 
     @Override
-    public Utilizator delete(Long id) {
+    public User delete(Long id) {
 
         String sql1 = "delete from users where id = ?";
         try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
@@ -193,7 +192,7 @@ public class UtilizatorDbRepository implements PagingRepository<Long, Utilizator
     }
 
     @Override
-    public Utilizator update(Utilizator entity) {
+    public User update(User entity) {
 
         String sql = "update users set first_name = ?, last_name = ?  where id = ? ";
         try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
@@ -209,10 +208,10 @@ public class UtilizatorDbRepository implements PagingRepository<Long, Utilizator
     }
 
     @Override
-    public Page<Utilizator> findAll(Pageable pageable) {
+    public Page<User> findAll(Pageable pageable) {
 
         String sql = "SELECT * FROM (SELECT *, ROW_NUMBER() over (ORDER BY id ASC) AS NoOfRows FROM users) AS Unused WHERE NoOfRows >= ? AND NoOfRows < ?";
-        List<Utilizator> users = new ArrayList<>();
+        List<User> users = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
              PreparedStatement ps = connection.prepareStatement(sql)){
 
@@ -227,7 +226,7 @@ public class UtilizatorDbRepository implements PagingRepository<Long, Utilizator
                 String username = resultSet.getString("username");
                 String password = resultSet.getString("password");
 
-                Utilizator utilizator = new Utilizator(username, firstName, lastName, password);
+                User utilizator = new User(username, firstName, lastName, password);
                 utilizator.setId(id);
                 users.add(utilizator);
             }
@@ -239,9 +238,9 @@ public class UtilizatorDbRepository implements PagingRepository<Long, Utilizator
     }
 
     @Override
-    public Page<Utilizator> findAllLike(Pageable pageable, Utilizator entity) {
+    public Page<User> findAllLike(Pageable pageable, User entity) {
         String sql = "SELECT * FROM (SELECT *, ROW_NUMBER() over (ORDER BY id ASC) AS NoOfRows FROM users where username like ?) AS Unused WHERE NoOfRows >= ? AND NoOfRows < ?";
-        List<Utilizator> users = new ArrayList<>();
+        List<User> users = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
              PreparedStatement ps = connection.prepareStatement(sql)){
 
@@ -257,7 +256,7 @@ public class UtilizatorDbRepository implements PagingRepository<Long, Utilizator
                 String username = resultSet.getString("username");
                 String password = resultSet.getString("password");
 
-                Utilizator utilizator = new Utilizator(username, firstName, lastName, password);
+                User utilizator = new User(username, firstName, lastName, password);
                 utilizator.setId(id);
                 users.add(utilizator);
             }

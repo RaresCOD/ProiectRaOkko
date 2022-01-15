@@ -16,7 +16,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="399.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ro.ubbcluj.map.proiectraokko4.UI_v2_Controller">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="399.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ro.ubbcluj.map.proiectraokko4.mainController">
    <children>
       <AnchorPane fx:id="EditPage" layoutX="10.0" layoutY="70.0" prefHeight="530.0" prefWidth="399.0" style="-fx-background-color: #b3b3ff;" visible="false" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
          <children>
@@ -26,8 +26,8 @@
                </image>
             </ImageView>
             <JFXButton layoutX="148.0" layoutY="476.0" onAction="#handleEditProfile" prefHeight="30.0" prefWidth="104.0" style="-fx-border-radius: 5em; -fx-background-radius: 5em; -fx-background-color: #6666ff;" text="Save" />
-            <JFXTextArea labelFloat="true" layoutX="102.0" layoutY="184.0" prefHeight="27.0" prefWidth="242.0" />
-            <JFXTextArea labelFloat="true" layoutX="95.0" layoutY="284.0" prefHeight="38.0" prefWidth="251.0" />
+            <JFXTextArea fx:id="EditProfileUsername" labelFloat="true" layoutX="102.0" layoutY="184.0" prefHeight="27.0" prefWidth="242.0" />
+            <JFXTextArea fx:id="EditProfilePassword" labelFloat="true" layoutX="95.0" layoutY="284.0" prefHeight="38.0" prefWidth="251.0" />
             <ImageView layoutX="55.0" layoutY="187.0">
                <image>
                   <Image url="@../images/profile.png" />

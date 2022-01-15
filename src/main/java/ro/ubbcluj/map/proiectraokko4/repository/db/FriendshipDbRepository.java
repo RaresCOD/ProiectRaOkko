@@ -1,7 +1,7 @@
 package ro.ubbcluj.map.proiectraokko4.repository.db;
 
 
-import ro.ubbcluj.map.proiectraokko4.domain.Prietenie;
+import ro.ubbcluj.map.proiectraokko4.domain.Friendship;
 import ro.ubbcluj.map.proiectraokko4.domain.Tuple;
 import ro.ubbcluj.map.proiectraokko4.domain.validators.ValidationException;
 import ro.ubbcluj.map.proiectraokko4.domain.validators.Validator;
@@ -20,11 +20,11 @@ import java.util.stream.StreamSupport;
 /**
  * Repo care salveaza si aduce datele din baza de date "friendship"
  */
-public class FriendshipDbRepository implements PagingRepository<Tuple<Long, Long>, Prietenie> {
+public class FriendshipDbRepository implements PagingRepository<Tuple<Long, Long>, Friendship> {
     private String url;
     private String username;
     private String password;
-    private Validator<Prietenie> validator;
+    private Validator<Friendship> validator;
 
     /**
      * @param url       url-ul cu care se conecteaza la baza de date
@@ -32,7 +32,7 @@ public class FriendshipDbRepository implements PagingRepository<Tuple<Long, Long
      * @param password  - parola
      * @param validator - validator pentru prietenie
      */
-    public FriendshipDbRepository(String url, String username, String password, Validator<Prietenie> validator) {
+    public FriendshipDbRepository(String url, String username, String password, Validator<Friendship> validator) {
         this.url = url;
         this.username = username;
         this.password = password;
@@ -40,7 +40,7 @@ public class FriendshipDbRepository implements PagingRepository<Tuple<Long, Long
     }
 
     @Override
-    public Prietenie findOne(Tuple<Long, Long> longLongTuple) {
+    public Friendship findOne(Tuple<Long, Long> longLongTuple) {
         String sql = "select * from friendship where (id1 = ? and id2 = ?) or (id1 = ? and id2 = ?)";
 
         try (Connection connection = DriverManager.getConnection(url, username, password);
@@ -55,7 +55,7 @@ public class FriendshipDbRepository implements PagingRepository<Tuple<Long, Long
                 Long id2 = result.getLong("id2");
                 Date date = result.getDate("dateofaccept");
                 int status = result.getInt("status");
-                Prietenie prietenie = new Prietenie();
+                Friendship prietenie = new Friendship();
                 Tuple<Long, Long> tuple = new Tuple(id1, id2);
                 prietenie.setId(tuple);
                 prietenie.setDate(date);
@@ -70,8 +70,8 @@ public class FriendshipDbRepository implements PagingRepository<Tuple<Long, Long
 
 
     @Override
-    public List<Prietenie> findAll() {
-        List<Prietenie> friends = new ArrayList<>();
+    public List<Friendship> findAll() {
+        List<Friendship> friends = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(url, username, password);
              PreparedStatement statement = connection.prepareStatement("select * from friendship");
              ResultSet resultSet = statement.executeQuery()) {
@@ -81,7 +81,7 @@ public class FriendshipDbRepository implements PagingRepository<Tuple<Long, Long
                 Long id2 = resultSet.getLong("id2");
                 Date date = resultSet.getDate("dateofaccept");
                 int status = resultSet.getInt("status");
-                Prietenie prietenie = new Prietenie();
+                Friendship prietenie = new Friendship();
                 Tuple<Long, Long> tuple = new Tuple(id1, id2);
                 prietenie.setId(tuple);
                 prietenie.setDate(date);
@@ -96,7 +96,7 @@ public class FriendshipDbRepository implements PagingRepository<Tuple<Long, Long
     }
 
     @Override
-    public Prietenie save(Prietenie entity) throws ValidationException {
+    public Friendship save(Friendship entity) throws ValidationException {
         validator.validate(entity);
 
         String sql = "insert into friendship (id1, id2, dateofaccept, status) values (?, ?, ?, ?)";
@@ -118,7 +118,7 @@ public class FriendshipDbRepository implements PagingRepository<Tuple<Long, Long
     }
 
     @Override
-    public Prietenie delete(Tuple<Long, Long> id) {
+    public Friendship delete(Tuple<Long, Long> id) {
 
         String sql = "delete from friendship where (id1 = ? and id2 = ?) or (id1 = ? and id2 = ?)";
 
@@ -136,7 +136,7 @@ public class FriendshipDbRepository implements PagingRepository<Tuple<Long, Long
     }
 
     @Override
-    public Prietenie update(Prietenie entity) {
+    public Friendship update(Friendship entity) {
         String sql = "update friendship set status = ?, dateofaccept = ? where (id1 = ? and id2 = ?) or (id1 = ? and id2 = ?)";
 
         try (Connection connection = DriverManager.getConnection(url, username, password);
@@ -155,10 +155,10 @@ public class FriendshipDbRepository implements PagingRepository<Tuple<Long, Long
     }
 
     @Override
-    public Page<Prietenie> findAll(Pageable pageable) {
+    public Page<Friendship> findAll(Pageable pageable) {
 
         String sql = "SELECT * FROM (SELECT *, ROW_NUMBER() over (ORDER BY id ASC) AS NoOfRows FROM friendship) AS Unused WHERE NoOfRows >= ? AND NoOfRows < ?";
-        List<Prietenie> friends = new ArrayList<>();
+        List<Friendship> friends = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(url, username, password);
              PreparedStatement ps = connection.prepareStatement(sql)) {
 
@@ -172,7 +172,7 @@ public class FriendshipDbRepository implements PagingRepository<Tuple<Long, Long
                 Long id2 = resultSet.getLong("id2");
                 Date date = resultSet.getDate("dateofaccept");
                 int status = resultSet.getInt("status");
-                Prietenie prietenie = new Prietenie();
+                Friendship prietenie = new Friendship();
                 Tuple<Long, Long> tuple = new Tuple(id1, id2);
                 prietenie.setId(tuple);
                 prietenie.setDate(date);
@@ -187,9 +187,9 @@ public class FriendshipDbRepository implements PagingRepository<Tuple<Long, Long
     }
 
     @Override
-    public Page<Prietenie> findAllLike(Pageable pageable, Prietenie entity) {
+    public Page<Friendship> findAllLike(Pageable pageable, Friendship entity) {
         String sql = "SELECT * FROM (SELECT *, ROW_NUMBER() over (ORDER BY id ASC) AS NoOfRows FROM friendship where (id1 = ? or id2 = ?) and status = ?) AS Unused WHERE NoOfRows >= ? AND NoOfRows < ?";
-        Set<Prietenie> friends = new HashSet<>();
+        Set<Friendship> friends = new HashSet<>();
         try (Connection connection = DriverManager.getConnection(url, username, password);
              PreparedStatement ps = connection.prepareStatement(sql)) {
 
@@ -206,7 +206,7 @@ public class FriendshipDbRepository implements PagingRepository<Tuple<Long, Long
                 Long id2 = resultSet.getLong("id2");
                 Date date = resultSet.getDate("dateofaccept");
                 int status = resultSet.getInt("status");
-                Prietenie prietenie = new Prietenie();
+                Friendship prietenie = new Friendship();
                 Tuple<Long, Long> tuple = new Tuple(id1, id2);
                 prietenie.setId(tuple);
                 prietenie.setDate(date);

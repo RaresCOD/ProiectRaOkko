@@ -1,37 +1,25 @@
 package ro.ubbcluj.map.proiectraokko4;
 
 import com.jfoenix.controls.*;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
-import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
-import javafx.stage.Stage;
 import javafx.util.Callback;
-import org.controlsfx.control.Notifications;
-import ro.ubbcluj.map.proiectraokko4.Message.Message;
-import ro.ubbcluj.map.proiectraokko4.controller.MessageAlert;
+import ro.ubbcluj.map.proiectraokko4.domain.Message;
+import ro.ubbcluj.map.proiectraokko4.utils.MessageAlert;
 import ro.ubbcluj.map.proiectraokko4.domain.*;
 import ro.ubbcluj.map.proiectraokko4.domain.validators.ValidationException;
 import ro.ubbcluj.map.proiectraokko4.service.*;
@@ -40,20 +28,17 @@ import ro.ubbcluj.map.proiectraokko4.utils.observer.TypeOfObservation;
 
 import java.io.IOException;
 import java.sql.Date;
-import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public class UI_v2_Controller implements Observer {
+public class mainController implements Observer {
 
-    UtilizatorService userService;
+    UserService userService;
     FriendshipService friendshipService;
     MessageService messageService;
     EventService eventService;
@@ -77,13 +62,13 @@ public class UI_v2_Controller implements Observer {
     @FXML
     private DatePicker DatePicker;
     @FXML
-    private JFXComboBox<Utilizator> FriendsBox;
+    private JFXComboBox<User> FriendsBox;
     @FXML
     private ImageView SearchImg, HomeImg, ChatImg, EventsImg, ChatSendImg;
     @FXML
     private Text TextUsername, Username, ProfilePageName, ProfilePageUsername, Chats, Friends, EventPageName, EventPageLocation, EventPageDescription, EventPageDate;
     @FXML
-    private JFXTextArea MsgText;
+    private JFXTextArea MsgText, EditProfileUsername, EditProfilePassword;
     @FXML
     private AnchorPane SearchPage, HomePage, ChatPage, EditPage, BottomBar, TopBar, FriendsPage, Chat, ProfilePageAnchor, EventPage, EventsListPage, EventAddPage, ChatAddPage, NotificationsPage;
     @FXML
@@ -98,7 +83,7 @@ public class UI_v2_Controller implements Observer {
     Button ProfilePageAddFriendButton, ProfilePageRejectFriendButton, EventPageSignButton;
 
 
-    public void setService(UtilizatorService userService, FriendshipService friendshipService, MessageService messageService, EventService eventService, RefreshThreadService refreshService, Long userId) {
+    public void setService(UserService userService, FriendshipService friendshipService, MessageService messageService, EventService eventService, RefreshThreadService refreshService, Long userId) {
         this.userService = userService;
         this.friendshipService = friendshipService;
         this.messageService = messageService;
@@ -115,7 +100,7 @@ public class UI_v2_Controller implements Observer {
 
     private void load()
     {
-        Utilizator user = userService.finduser(UserId);
+        User user = userService.finduser(UserId);
         TextUsername.setText(user.getUsername());
 
         formatList(SearchList);
@@ -173,7 +158,7 @@ public class UI_v2_Controller implements Observer {
         modelChatMsg.setAll(showList);
     }
 
-    private void initUsersModel(List<Utilizator> list)
+    private void initUsersModel(List<User> list)
     {
         if(list == null) return;;
         List<String> uList = StreamSupport.stream(list.spliterator(), false)
@@ -183,13 +168,13 @@ public class UI_v2_Controller implements Observer {
         UsersModel.setAll(uList);
     }
 
-    private void initFriendsModel(List<Tuple<Utilizator, Date>> list)
+    private void initFriendsModel(List<Tuple<User, Date>> list)
     {
         if(list == null) return;
         List<String> uList = StreamSupport.stream(list.spliterator(), false)
-                .sorted(new Comparator<Tuple<Utilizator, Date>>() {
+                .sorted(new Comparator<Tuple<User, Date>>() {
                     @Override
-                    public int compare(Tuple<Utilizator, Date> e1, Tuple<Utilizator, Date> e2) {
+                    public int compare(Tuple<User, Date> e1, Tuple<User, Date> e2) {
                         return e1.getLeft().getUsername().compareTo(e2.getLeft().getUsername());
                     }
                 })
@@ -203,12 +188,11 @@ public class UI_v2_Controller implements Observer {
         if(EventId == -1) return;
         Event event = eventService.getOne(EventId);
         if(event.getParticipants() == null) { EventPageParticipantsModel.setAll(new ArrayList<>()); return; }
-        List<Utilizator> participants = Arrays.stream(event.getParticipants().split(";")).map(x->userService.finduser(Long.valueOf(x))).toList();
-        participants.forEach(System.out::println);
+        List<User> participants = Arrays.stream(event.getParticipants().split(";")).map(x->userService.finduser(Long.valueOf(x))).toList();
         List<String> uList = StreamSupport.stream(participants.spliterator(), false)
-                .sorted(new Comparator<Utilizator>() {
+                .sorted(new Comparator<User>() {
                     @Override
-                    public int compare(Utilizator e1, Utilizator e2) {
+                    public int compare(User e1, User e2) {
                         return e1.getUsername().compareTo(e2.getUsername());
                     }
                 })
@@ -233,13 +217,13 @@ public class UI_v2_Controller implements Observer {
         ProfilePageEventsModel.setAll(uList);
     }
 
-    private void initPendingFriendsModel(List<Tuple<Utilizator, Date>> list)
+    private void initPendingFriendsModel(List<Tuple<User, Date>> list)
     {
         if(list == null) return;
         List<String> uList = StreamSupport.stream(list.spliterator(), false)
-                .sorted(new Comparator<Tuple<Utilizator, Date>>() {
+                .sorted(new Comparator<Tuple<User, Date>>() {
                     @Override
-                    public int compare(Tuple<Utilizator, Date> e1, Tuple<Utilizator, Date> e2) {
+                    public int compare(Tuple<User, Date> e1, Tuple<User, Date> e2) {
                         return e1.getLeft().getUsername().compareTo(e2.getLeft().getUsername());
                     }
                 })
@@ -248,13 +232,13 @@ public class UI_v2_Controller implements Observer {
         PendingFriendsModel.setAll(uList);
     }
 
-    private void initProfilePageFriendsModel(List<Tuple<Utilizator, Date>> list)
+    private void initProfilePageFriendsModel(List<Tuple<User, Date>> list)
     {
         if(list == null) return;
         List<String> uList = StreamSupport.stream(list.spliterator(), false)
-                .sorted(new Comparator<Tuple<Utilizator, Date>>() {
+                .sorted(new Comparator<Tuple<User, Date>>() {
                     @Override
-                    public int compare(Tuple<Utilizator, Date> e1, Tuple<Utilizator, Date> e2) {
+                    public int compare(Tuple<User, Date> e1, Tuple<User, Date> e2) {
                         return e1.getLeft().getUsername().compareTo(e2.getLeft().getUsername());
                     }
                 })
@@ -340,14 +324,14 @@ public class UI_v2_Controller implements Observer {
         ChatAddPage.setVisible(false);
         NotificationsPage.setVisible(false);
 
-        Utilizator thisUser = userService.finduser(UserId);
+        User thisUser = userService.finduser(UserId);
         Username.setText(thisUser.getFirstName() + " " + thisUser.getLastName());
         Chats.setText(String.valueOf(messageService.allChats(UserId).size()));
         Friends.setText(String.valueOf(friendshipService.getFriends(UserId).size()));
 
         FriendsBox.getItems().addAll(friendshipService.getFriends(UserId).stream().map(x->x.getLeft()).toList());
-        FriendsBox.setCellFactory(x -> new ListCell<Utilizator>(){
-            protected void updateItem(Utilizator item, boolean empty) {
+        FriendsBox.setCellFactory(x -> new ListCell<User>(){
+            protected void updateItem(User item, boolean empty) {
                 super.updateItem(item, empty);
                 setText(empty || item == null ? "" : item.getUsername());
             }
@@ -585,18 +569,31 @@ public class UI_v2_Controller implements Observer {
     }
 
     public void handleEditProfile(ActionEvent actionEvent) {
-        EditPage.setVisible(true);
-        SearchPage.setVisible(false);
-        ChatPage.setVisible(false);
-        HomePage.setVisible(false);
-        FriendsPage.setVisible(false);
-        Chat.setVisible(false);
-        ProfilePageAnchor.setVisible(false);
-        EventPage.setVisible(false);
-        EventsListPage.setVisible(false);
-        EventAddPage.setVisible(false);
-        ChatAddPage.setVisible(false);
-        NotificationsPage.setVisible(false);
+        if(EditPage.isVisible())
+        {
+            try{
+                User user = userService.finduser(UserId);
+                userService.updateUtilizator(UserId, EditProfileUsername.getText(), user.getFirstName(), user.getLastName(), EditProfilePassword.getText());
+            } catch (ValidationException e)
+            {
+                MessageAlert.showErrorMessage(null, e.getMessage());
+            }
+        }
+        else
+        {
+            EditPage.setVisible(true);
+            SearchPage.setVisible(false);
+            ChatPage.setVisible(false);
+            HomePage.setVisible(false);
+            FriendsPage.setVisible(false);
+            Chat.setVisible(false);
+            ProfilePageAnchor.setVisible(false);
+            EventPage.setVisible(false);
+            EventsListPage.setVisible(false);
+            EventAddPage.setVisible(false);
+            ChatAddPage.setVisible(false);
+            NotificationsPage.setVisible(false);
+        }
     }
 
     public void handleChatListOnMouseClick(MouseEvent mouseEvent) {
@@ -646,7 +643,6 @@ public class UI_v2_Controller implements Observer {
         String selection = ProfilePageFriendsList.getSelectionModel().getSelectedItem();
         if(selection == null) return;
         selection = selection.substring(0, selection.indexOf("(") - 1);
-        System.out.println("'" + selection + "'");
         loadProfilePage(selection);
     }
 
@@ -737,7 +733,7 @@ public class UI_v2_Controller implements Observer {
     }
 
     public void handleExportPrivateButtonAction(ActionEvent actionEvent) {
-        Utilizator selectedFriend = FriendsBox.getSelectionModel().getSelectedItem();
+        User selectedFriend = FriendsBox.getSelectionModel().getSelectedItem();
         if(DatePicker.getValue() == null)
             MessageAlert.showErrorMessage(null,"Nu ai selectat o data.");
         else if(selectedFriend != null){
@@ -795,8 +791,8 @@ public class UI_v2_Controller implements Observer {
                 contentStream.showText("Friendships made in this date (" + DatePicker.getValue() + "):");
                 contentStream.newLine();
 
-                List<Tuple<Utilizator, Date>> friendsMade = friendshipService.getFriends(UserId);
-                List<Tuple<Utilizator, Date>> friends = StreamSupport.stream(friendsMade.spliterator(), false).collect(Collectors.toList());
+                List<Tuple<User, Date>> friendsMade = friendshipService.getFriends(UserId);
+                List<Tuple<User, Date>> friends = StreamSupport.stream(friendsMade.spliterator(), false).collect(Collectors.toList());
                 friends.forEach(f -> {
                     if (f.getRight().toLocalDate().isEqual(DatePicker.getValue())) {
                         try {

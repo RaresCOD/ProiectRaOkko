@@ -1,36 +1,27 @@
 package ro.ubbcluj.map.proiectraokko4;
 
 import com.jfoenix.controls.JFXCheckBox;
-import javafx.application.Application;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import ro.ubbcluj.map.proiectraokko4.domain.Utilizator;
+import ro.ubbcluj.map.proiectraokko4.domain.User;
 import ro.ubbcluj.map.proiectraokko4.domain.validators.ValidationException;
 import ro.ubbcluj.map.proiectraokko4.service.*;
 import ro.ubbcluj.map.proiectraokko4.utils.Crypt;
 
 import java.io.IOException;
 
-public class LoginController_v2 {
+public class loginController {
 
-    UtilizatorService userService;
+    UserService userService;
     FriendshipService friendshipService;
     MessageService messageService;
     EventService eventService;
@@ -47,7 +38,7 @@ public class LoginController_v2 {
     @FXML
     private PasswordField password, passwordRegister;
 
-    public void setService(UtilizatorService userService, FriendshipService friendshipService, MessageService messageService, EventService eventService, RefreshThreadService refreshService) {
+    public void setService(UserService userService, FriendshipService friendshipService, MessageService messageService, EventService eventService, RefreshThreadService refreshService) {
         this.userService = userService;
         this.friendshipService = friendshipService;
         this.messageService = messageService;
@@ -63,11 +54,11 @@ public class LoginController_v2 {
         if(id != null) {
             try {
                 FXMLLoader fxmlLoader = new FXMLLoader();
-                fxmlLoader.setLocation(getClass().getResource("views/home_v3.fxml"));
+                fxmlLoader.setLocation(getClass().getResource("views/main.fxml"));
                 Scene scene = new Scene(fxmlLoader.load());
                 Stage stage = new Stage();
                 stage.setScene(scene);
-                UI_v2_Controller userInterface = fxmlLoader.getController();
+                mainController userInterface = fxmlLoader.getController();
                 userInterface.setService(userService, friendshipService, messageService, eventService, refreshService, id);
                 stage.show();
                 ((Node)(actionEvent.getSource())).getScene().getWindow().hide();
@@ -124,14 +115,14 @@ public class LoginController_v2 {
         try{
             String salt = Crypt.gensalt(12);
             pass = Crypt.hashpw(pass, salt);
-            Utilizator user = userService.addUtilizator(username, firstName, lastName, pass);
+            User user = userService.addUtilizator(username, firstName, lastName, pass);
             try {
                 FXMLLoader fxmlLoader = new FXMLLoader();
-                fxmlLoader.setLocation(getClass().getResource("views/home_v3.fxml"));
+                fxmlLoader.setLocation(getClass().getResource("views/main.fxml"));
                 Scene scene = new Scene(fxmlLoader.load());
                 Stage stage = new Stage();
                 stage.setScene(scene);
-                UI_v2_Controller userInterface = fxmlLoader.getController();
+                mainController userInterface = fxmlLoader.getController();
                 userInterface.setService(userService, friendshipService, messageService, eventService, refreshService, user.getId());
                 stage.setResizable(false);
                 stage.show();

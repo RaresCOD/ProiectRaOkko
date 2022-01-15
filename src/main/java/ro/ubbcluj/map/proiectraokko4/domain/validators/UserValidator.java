@@ -2,16 +2,16 @@ package ro.ubbcluj.map.proiectraokko4.domain.validators;
 
 
 
-import ro.ubbcluj.map.proiectraokko4.domain.Utilizator;
+import ro.ubbcluj.map.proiectraokko4.domain.User;
 
 import java.util.regex.Pattern;
 
 /**
  * user validator class
  */
-public class UtilizatorValidator implements Validator<Utilizator> {
+public class UserValidator implements Validator<User> {
     @Override
-    public void validate(Utilizator entity) throws ValidationException {
+    public void validate(User entity) throws ValidationException {
         String onlyCharacters = "^[a-zA-Z]*$";
         if (entity == null)
             throw new ValidationException("User most not be null");

@@ -1,8 +1,7 @@
 package ro.ubbcluj.map.proiectraokko4.service;
 
 
-import ro.ubbcluj.map.proiectraokko4.domain.ProfilePage;
-import ro.ubbcluj.map.proiectraokko4.domain.Utilizator;
+import ro.ubbcluj.map.proiectraokko4.domain.User;
 import ro.ubbcluj.map.proiectraokko4.domain.validators.ValidationException;
 import ro.ubbcluj.map.proiectraokko4.repository.paging.Page;
 import ro.ubbcluj.map.proiectraokko4.repository.paging.Pageable;
@@ -19,17 +18,17 @@ import java.util.List;
 /**
  * service
  */
-public class UtilizatorService implements Observable {
-    PagingRepository<Long, Utilizator> userRepo;
+public class UserService implements Observable {
+    PagingRepository<Long, User> userRepo;
 
     /**
      * @param userRepo user userRepo
      */
-    public UtilizatorService(PagingRepository<Long, Utilizator> userRepo) {
+    public UserService(PagingRepository<Long, User> userRepo) {
         this.userRepo = userRepo;
     }
 
-    public Utilizator finduser(Long id) {
+    public User finduser(Long id) {
         return userRepo.findOne(id);
     }
 
@@ -38,10 +37,10 @@ public class UtilizatorService implements Observable {
      * @param lastName  ln
      * @return add user
      */
-    public Utilizator addUtilizator(String username, String firstName, String lastName, String password) {
-        Utilizator newUser = new Utilizator(username, firstName, lastName, password);
+    public User addUtilizator(String username, String firstName, String lastName, String password) {
+        User newUser = new User(username, firstName, lastName, password);
         try {
-            Utilizator util = userRepo.save(newUser);
+            User util = userRepo.save(newUser);
             notifyObservers();
             return util;
         } catch (IllegalArgumentException i) {
@@ -56,18 +55,17 @@ public class UtilizatorService implements Observable {
      * @param id id
      * @return delete user
      */
-    public Utilizator deleteUtilizator(Long id) {
+    public User deleteUtilizator(Long id) {
         try {
-            Utilizator utilizator = userRepo.findOne(id);
+            User utilizator = userRepo.findOne(id);
             if (utilizator == null) {
-                System.out.println("Id inexistent");
-                return null;
+                throw new ValidationException("User-ul nu exista");
             }
             userRepo.delete(id);
             notifyObservers();
             return utilizator;
-        } catch (IllegalArgumentException i) {
-            System.out.println(i.getMessage());
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
         }
         return null;
     }
@@ -78,21 +76,18 @@ public class UtilizatorService implements Observable {
      * @param lastName  ln
      * @return update user
      */
-    public Utilizator updateUtilizator(Long id, String username, String firstName, String lastName, String password) {
-        Utilizator nou = new Utilizator(username, firstName, lastName, password);
+    public User updateUtilizator(Long id, String username, String firstName, String lastName, String password) {
+        User nou = new User(username, firstName, lastName, password);
         nou.setId(id);
         try {
-            Utilizator util = userRepo.update(nou);
+            User util = userRepo.update(nou);
             if (util != null) {
-                System.out.println("Utilizator inexistent");
-                return null;
+                throw new ValidationException("User-ul nu exista");
             }
             notifyObservers();
             return util;
-        } catch (IllegalArgumentException i) {
-            System.out.println(i.getMessage());
-        } catch (ValidationException e) {
-            System.out.println(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
         }
         return null;
     }
@@ -100,13 +95,13 @@ public class UtilizatorService implements Observable {
     /**
      * @return all users
      */
-    public Iterable<Utilizator> getAll() {
+    public Iterable<User> getAll() {
         return userRepo.findAll();
     }
 
     public Long getUserId(String userName) {
-        Iterable<Utilizator> list = userRepo.findAll();
-        for (Utilizator curent : list) {
+        Iterable<User> list = userRepo.findAll();
+        for (User curent : list) {
             if (curent.getUsername().equals(userName)) {
                 return curent.getId();
             }
@@ -117,7 +112,7 @@ public class UtilizatorService implements Observable {
     public Long Login(String userName, String pass) {
         Long id = getUserId(userName);
         if(id!=null) {
-            Utilizator user = userRepo.findOne(id);
+            User user = userRepo.findOne(id);
             if(Crypt.checkpw(pass, user.getPassword())) {
                 return id;
             } else {
@@ -131,10 +126,10 @@ public class UtilizatorService implements Observable {
     private int pageNumber = 0;
     private int pageSize = 18;
 
-    public List<Utilizator> getNextUsers(String containsUsername)
+    public List<User> getNextUsers(String containsUsername)
     {
         this.pageNumber++;
-        List<Utilizator> rez = getUsersOnPageWithUsername(this.pageNumber, containsUsername);
+        List<User> rez = getUsersOnPageWithUsername(this.pageNumber, containsUsername);
         if(rez.size() > 0)
         {
             return rez;
@@ -143,10 +138,10 @@ public class UtilizatorService implements Observable {
         return null;
     }
 
-    public List<Utilizator> getPreviousUsers(String containsUsername)
+    public List<User> getPreviousUsers(String containsUsername)
     {
         this.pageNumber--;
-        List<Utilizator> rez = getUsersOnPageWithUsername(this.pageNumber, containsUsername);
+        List<User> rez = getUsersOnPageWithUsername(this.pageNumber, containsUsername);
         if(rez.size() > 0)
         {
             return rez;
@@ -155,11 +150,11 @@ public class UtilizatorService implements Observable {
         return null;
     }
 
-    public List<Utilizator> getUsersOnPageWithUsername(int page, String containsUsername)
+    public List<User> getUsersOnPageWithUsername(int page, String containsUsername)
     {
         if(page != -1) this.pageNumber = page;
         Pageable pageable = new PageableImplementation(this.pageNumber, this.pageSize);
-        Page<Utilizator> studentPage = userRepo.findAllLike(pageable, new Utilizator(containsUsername, null, null, null));
+        Page<User> studentPage = userRepo.findAllLike(pageable, new User(containsUsername, null, null, null));
         return studentPage.getContent().toList();
     }
 

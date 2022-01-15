@@ -2,22 +2,14 @@ package ro.ubbcluj.map.proiectraokko4.repository.db;
 
 
 import ro.ubbcluj.map.proiectraokko4.domain.Event;
-import ro.ubbcluj.map.proiectraokko4.domain.Tuple;
-import ro.ubbcluj.map.proiectraokko4.domain.Utilizator;
 import ro.ubbcluj.map.proiectraokko4.domain.validators.ValidationException;
 import ro.ubbcluj.map.proiectraokko4.domain.validators.Validator;
 import ro.ubbcluj.map.proiectraokko4.repository.Repository;
-import ro.ubbcluj.map.proiectraokko4.repository.paging.Page;
-import ro.ubbcluj.map.proiectraokko4.repository.paging.PageImplementation;
-import ro.ubbcluj.map.proiectraokko4.repository.paging.Pageable;
 
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.StreamSupport;
 
 /**
  * Repo care salveaza si aduce datele din baza de date "friendship"

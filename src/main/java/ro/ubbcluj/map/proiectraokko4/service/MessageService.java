@@ -1,15 +1,8 @@
 package ro.ubbcluj.map.proiectraokko4.service;
 
-import ro.ubbcluj.map.proiectraokko4.Message.Message;
-import ro.ubbcluj.map.proiectraokko4.domain.Event;
-import ro.ubbcluj.map.proiectraokko4.domain.Prietenie;
-import ro.ubbcluj.map.proiectraokko4.domain.Tuple;
-import ro.ubbcluj.map.proiectraokko4.domain.Utilizator;
-import ro.ubbcluj.map.proiectraokko4.domain.validators.ValidationException;
+import ro.ubbcluj.map.proiectraokko4.domain.Message;
+import ro.ubbcluj.map.proiectraokko4.domain.User;
 import ro.ubbcluj.map.proiectraokko4.repository.Repository;
-import ro.ubbcluj.map.proiectraokko4.repository.paging.Page;
-import ro.ubbcluj.map.proiectraokko4.repository.paging.Pageable;
-import ro.ubbcluj.map.proiectraokko4.repository.paging.PageableImplementation;
 import ro.ubbcluj.map.proiectraokko4.repository.paging.PagingRepository;
 import ro.ubbcluj.map.proiectraokko4.utils.observer.Observable;
 import ro.ubbcluj.map.proiectraokko4.utils.observer.Observer;
@@ -21,16 +14,16 @@ import java.util.*;
 public class MessageService implements Observable {
 
     Repository<Long, Message> messagesRepo;
-    PagingRepository<Long, Utilizator> userRepo;
+    PagingRepository<Long, User> userRepo;
 
-    public MessageService(PagingRepository<Long, Utilizator> userRepo, Repository<Long, Message> messagesRepo) {
+    public MessageService(PagingRepository<Long, User> userRepo, Repository<Long, Message> messagesRepo) {
         this.userRepo = userRepo;
         this.messagesRepo = messagesRepo;
     }
 
     public void addMessage(Long id1, List<Long> Listid, String msg) {
-        Utilizator from = userRepo.findOne(id1);
-        List<Utilizator> to = new ArrayList<Utilizator>();
+        User from = userRepo.findOne(id1);
+        List<User> to = new ArrayList<User>();
         Listid.stream().forEach(x -> to.add(userRepo.findOne(x)));
 
         Message message = new Message(from, to, msg);
@@ -44,12 +37,12 @@ public class MessageService implements Observable {
         Iterable<Message> all = messagesRepo.findAll();
         List<Message> rez = new ArrayList<>();
         for(Message curent:all) {
-            List<Utilizator> list = curent.getTo();
+            List<User> list = curent.getTo();
             Boolean found = false;
             if (curent.getFrom().getId() == userId) {
                 found = true;
             }
-            for(Utilizator to:list) {
+            for(User to:list) {
                 if(to.getId() == userId) {
                     found = true;
                 }
@@ -65,30 +58,6 @@ public class MessageService implements Observable {
             }
         });
         return rez;
-    }
-
-    public void showAllMessagesForThisUser(Long userId) {
-        Iterable<Message> all = messagesRepo.findAll();
-        for(Message curent:all) {
-            List<Utilizator> list = curent.getTo();
-            Boolean found = false;
-            for(Utilizator to:list) {
-                if(to.getId() == userId) {
-                    found = true;
-                }
-            }
-            if (found == true) {
-                System.out.println(curent.getFrom().getFirstName() + " sent " + curent.getMsg() + " id: " + curent.getId() + " " + curent.getData());
-            }
-        }
-    }
-
-    public void showAllGroupChats(Long userId) {
-        Iterable<Message> all = messagesRepo.findAll();
-
-        for (Message curent: all) {
-
-        }
     }
 
     public static <T> boolean listEqualsIgnoreOrder(List<T> list1, List<T> list2) {
@@ -120,18 +89,18 @@ public class MessageService implements Observable {
 
     public List<String> allChats(Long userId) {
         List<Message> allMsg = messagesRepo.findAll();
-        List<List<Utilizator>> rez = new ArrayList<>();
+        List<List<User>> rez = new ArrayList<>();
         List<String> rezBun = new ArrayList<>();
         for(Message msg : allMsg) {
-            List<Utilizator> group = msg.getTo();
+            List<User> group = msg.getTo();
             group.add(msg.getFrom());
             boolean found = false;
-            for(Utilizator curent: group) {
+            for(User curent: group) {
                 if(curent.getId() == userId) {
                     found = true;
                 }
             }
-            for(List<Utilizator> curent: rez) {
+            for(List<User> curent: rez) {
                 if(listEqualsIgnoreOrder(curent, group) == true){
                     found = false;
                 }

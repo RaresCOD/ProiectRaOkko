@@ -1,4 +1,4 @@
-package ro.ubbcluj.map.proiectraokko4.controller;
+package ro.ubbcluj.map.proiectraokko4.utils;
 
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;

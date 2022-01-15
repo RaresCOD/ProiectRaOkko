@@ -1,13 +1,11 @@
 package ro.ubbcluj.map.proiectraokko4.service;
 
-import ro.ubbcluj.map.proiectraokko4.Conexitate.DFS;
-import ro.ubbcluj.map.proiectraokko4.Message.Message;
-import ro.ubbcluj.map.proiectraokko4.domain.Prietenie;
+import ro.ubbcluj.map.proiectraokko4.conexitate.DFS;
+import ro.ubbcluj.map.proiectraokko4.domain.Friendship;
 import ro.ubbcluj.map.proiectraokko4.domain.ProfilePage;
 import ro.ubbcluj.map.proiectraokko4.domain.Tuple;
-import ro.ubbcluj.map.proiectraokko4.domain.Utilizator;
+import ro.ubbcluj.map.proiectraokko4.domain.User;
 import ro.ubbcluj.map.proiectraokko4.domain.validators.ValidationException;
-import ro.ubbcluj.map.proiectraokko4.repository.Repository;
 import ro.ubbcluj.map.proiectraokko4.repository.paging.Page;
 import ro.ubbcluj.map.proiectraokko4.repository.paging.Pageable;
 import ro.ubbcluj.map.proiectraokko4.repository.paging.PageableImplementation;
@@ -23,15 +21,15 @@ import java.util.List;
 
 public class FriendshipService implements Observable {
 
-    PagingRepository<Long, Utilizator> userRepo;
-    PagingRepository<Tuple<Long, Long>, Prietenie> friendRepo;
+    PagingRepository<Long, User> userRepo;
+    PagingRepository<Tuple<Long, Long>, Friendship> friendRepo;
 
     /**
      *
      * @param userRepo user repo
      * @param friendRepo friendship repo
      */
-    public FriendshipService(PagingRepository<Long, Utilizator> userRepo, PagingRepository<Tuple<Long, Long>, Prietenie> friendRepo) {
+    public FriendshipService(PagingRepository<Long, User> userRepo, PagingRepository<Tuple<Long, Long>, Friendship> friendRepo) {
         this.userRepo = userRepo;
         this.friendRepo = friendRepo;
     }
@@ -42,7 +40,7 @@ public class FriendshipService implements Observable {
      * @param id2 - id ul celui de al doilea prieten
      * @return - prietenia daca exista, altfel null
      */
-    public Prietenie FindOneFriend(Long id1, Long id2) {
+    public Friendship FindOneFriend(Long id1, Long id2) {
         return friendRepo.findOne(new Tuple(id1, id2));
     }
 
@@ -52,7 +50,7 @@ public class FriendshipService implements Observable {
      * @param id2 user id
      */
     public void addFriend(Long id1, Long id2) {
-        Prietenie prietenie = new Prietenie();
+        Friendship prietenie = new Friendship();
         Tuple<Long, Long> tuple = new Tuple(id1, id2);
 
         if(id1 == id2){
@@ -64,7 +62,7 @@ public class FriendshipService implements Observable {
         if (userRepo.findOne(id2) == null) {
             throw new ValidationException("User inexistent!");
         }
-        Prietenie p = friendRepo.findOne(new Tuple<>(id1, id2));
+        Friendship p = friendRepo.findOne(new Tuple<>(id1, id2));
         if(p != null && p.getStatus() != 3){
             throw new ValidationException("Cerere de prietenie deja trimisa!");
         }
@@ -95,7 +93,7 @@ public class FriendshipService implements Observable {
             throw new ValidationException("User inexistent!");
         }
         if (friendRepo.findOne(new Tuple(id1, id2)) == null) {
-            throw new ValidationException("Prietenie inexistenta!");
+            throw new ValidationException("Friendship inexistenta!");
         }
         friendRepo.delete(new Tuple(id1, id2));
         notifyObservers();
@@ -106,8 +104,8 @@ public class FriendshipService implements Observable {
      * @param id id
      * @return specific friends
      */
-    public List<Tuple<Utilizator, Prietenie>> getFriendRequests(Long id) {
-        List<Tuple<Utilizator, Prietenie>> rez = friendRepo.findAll().stream()
+    public List<Tuple<User, Friendship>> getFriendRequests(Long id) {
+        List<Tuple<User, Friendship>> rez = friendRepo.findAll().stream()
                 .filter(x -> {
                     if (x.getId().getRight() == id || x.getId().getLeft() == id) {
                         return true;
@@ -115,9 +113,9 @@ public class FriendshipService implements Observable {
                 })
                 .map(x -> {
                             if (x.getId().getRight() == id)
-                                return new Tuple<Utilizator, Prietenie>(userRepo.findOne(x.getId().getLeft()), x);
+                                return new Tuple<User, Friendship>(userRepo.findOne(x.getId().getLeft()), x);
                             else
-                                return new Tuple<Utilizator, Prietenie>(userRepo.findOne(x.getId().getRight()), x);
+                                return new Tuple<User, Friendship>(userRepo.findOne(x.getId().getRight()), x);
                         }
                 )
                 .toList();
@@ -136,7 +134,7 @@ public class FriendshipService implements Observable {
         if(friendRepo.findOne(new Tuple<>(id1, id2)).getStatus() == 3 && answer == 3) return;
         if(friendRepo.findOne(new Tuple<>(id1, id2)).getStatus() == 2) return;
         if(answer == 1) return;
-        Prietenie updated = new Prietenie();
+        Friendship updated = new Friendship();
         updated.setId(new Tuple<>(id1, id2));
         LocalDateTime currentDate = LocalDateTime.now();
         updated.setDate((java.sql.Date) new Date(currentDate.getYear() - 1900, currentDate.getMonthValue(), currentDate.getDayOfMonth()));
@@ -150,8 +148,8 @@ public class FriendshipService implements Observable {
      * @param id id
      * @return specific friends
      */
-    public List<Tuple<Utilizator, Date>> getFriends(Long id) {
-        List<Tuple<Utilizator, Date>> rez = friendRepo.findAll().stream()
+    public List<Tuple<User, Date>> getFriends(Long id) {
+        List<Tuple<User, Date>> rez = friendRepo.findAll().stream()
                 .filter(x -> {
                     if (x.getId().getLeft() == id && x.getStatus() == 2) {
                         return true;
@@ -161,9 +159,9 @@ public class FriendshipService implements Observable {
                 })
                 .map(x -> {
                             if (x.getId().getRight() == id)
-                                return new Tuple<Utilizator, Date>(userRepo.findOne(x.getId().getLeft()), x.getDate());
+                                return new Tuple<User, Date>(userRepo.findOne(x.getId().getLeft()), x.getDate());
                             else
-                                return new Tuple<Utilizator, Date>(userRepo.findOne(x.getId().getRight()), x.getDate());
+                                return new Tuple<User, Date>(userRepo.findOne(x.getId().getRight()), x.getDate());
                         }
                 )
                 .toList();
@@ -171,14 +169,14 @@ public class FriendshipService implements Observable {
         return rez;
     }
 
-    private List<Tuple<Utilizator, Date>> translateFriendsToUsersWithDate(List<Prietenie> list, Long id)
+    private List<Tuple<User, Date>> translateFriendsToUsersWithDate(List<Friendship> list, Long id)
     {
-        List<Tuple<Utilizator, Date>> rez = list.stream()
+        List<Tuple<User, Date>> rez = list.stream()
                 .map(x -> {
                             if (x.getId().getRight() == id)
-                                return new Tuple<Utilizator, Date>(userRepo.findOne(x.getId().getLeft()), x.getDate());
+                                return new Tuple<User, Date>(userRepo.findOne(x.getId().getLeft()), x.getDate());
                             else
-                                return new Tuple<Utilizator, Date>(userRepo.findOne(x.getId().getRight()), x.getDate());
+                                return new Tuple<User, Date>(userRepo.findOne(x.getId().getRight()), x.getDate());
                         }
                 )
                 .toList();
@@ -191,12 +189,12 @@ public class FriendshipService implements Observable {
      * @param id id, int month
      * @return specific friends
      */
-    public List<Tuple<Utilizator, Date>> getFriendsFromMonth(Long id, int month)  {
+    public List<Tuple<User, Date>> getFriendsFromMonth(Long id, int month)  {
         return getFriends(id).stream().filter(x -> x.getRight().toLocalDate().getMonthValue() == month).toList();
     }
 
     public boolean areFriends(Long id1, Long id2) {
-        Prietenie p = friendRepo.findOne(new Tuple<>(id1,id2));
+        Friendship p = friendRepo.findOne(new Tuple<>(id1,id2));
         if (p == null || p.getStatus() != 2) return false;
         return true;
     }
@@ -206,7 +204,7 @@ public class FriendshipService implements Observable {
      *
      * @return all friends
      */
-    public Iterable<Prietenie> getAllFriends() {
+    public Iterable<Friendship> getAllFriends() {
         return friendRepo.findAll();
     }
 
@@ -214,7 +212,7 @@ public class FriendshipService implements Observable {
      * @return nb of communites
      */
     public int numarComunitati() {
-        List<Utilizator> users = userRepo.findAll();
+        List<User> users = userRepo.findAll();
         DFS dfs = new DFS(users.size(), friendRepo.findAll(), users);
         return dfs.execute1();
     }
@@ -225,16 +223,16 @@ public class FriendshipService implements Observable {
      * @return int
      */
     public int CeaMaiMareComunitate() {
-        List<Utilizator> users = userRepo.findAll();
+        List<User> users = userRepo.findAll();
         DFS dfs = new DFS(users.size(), friendRepo.findAll(), users);
         return dfs.execute2();
     }
 
     public ProfilePage getProfilePage(Long userId, Long id)
     {
-        Utilizator user = userRepo.findOne(id);
-        List<Tuple<Utilizator, Date>> friendsList = getFriends(id);
-        Prietenie p = friendRepo.findOne(new Tuple<>(userId, id));
+        User user = userRepo.findOne(id);
+        List<Tuple<User, Date>> friendsList = getFriends(id);
+        Friendship p = friendRepo.findOne(new Tuple<>(userId, id));
         int friendshipStatus = 0;
         if(p == null) friendshipStatus = 0;
         else if(p.getId().getLeft() == userId) friendshipStatus = p.getStatus();
@@ -253,10 +251,10 @@ public class FriendshipService implements Observable {
         this.listPageSize = pageSize;
     }
 
-    public List<Tuple<Utilizator, Date>> getListNextFriends(Long id, int status)
+    public List<Tuple<User, Date>> getListNextFriends(Long id, int status)
     {
         this.listPageNumber++;
-        List<Tuple<Utilizator, Date>> rez = getFriendsOnListPageWithIdAndStatus(this.listPageNumber, id, status);
+        List<Tuple<User, Date>> rez = getFriendsOnListPageWithIdAndStatus(this.listPageNumber, id, status);
         if(rez.size() > 0)
         {
             return rez;
@@ -265,10 +263,10 @@ public class FriendshipService implements Observable {
         return null;
     }
 
-    public List<Tuple<Utilizator, Date>> getListPreviousFriends(Long id, int status)
+    public List<Tuple<User, Date>> getListPreviousFriends(Long id, int status)
     {
         this.listPageNumber--;
-        List<Tuple<Utilizator, Date>> rez = getFriendsOnListPageWithIdAndStatus(this.listPageNumber, id, status);
+        List<Tuple<User, Date>> rez = getFriendsOnListPageWithIdAndStatus(this.listPageNumber, id, status);
         if(rez.size() > 0)
         {
             return rez;
@@ -277,13 +275,13 @@ public class FriendshipService implements Observable {
         return null;
     }
 
-    public List<Tuple<Utilizator, Date>> getFriendsOnListPageWithIdAndStatus(int page, Long id, int status) {
+    public List<Tuple<User, Date>> getFriendsOnListPageWithIdAndStatus(int page, Long id, int status) {
         if(page != -1) this.listPageNumber = page;
         Pageable pageable = new PageableImplementation(this.listPageNumber, this.listPageSize);
-        Prietenie p = new Prietenie();
+        Friendship p = new Friendship();
         p.setId(new Tuple<>(id, null));
         p.setStatus(status);
-        Page<Prietenie> friendsPage = friendRepo.findAllLike(pageable, p);
+        Page<Friendship> friendsPage = friendRepo.findAllLike(pageable, p);
         if(friendsPage == null) return null;
         return translateFriendsToUsersWithDate(friendsPage.getContent().toList(), id);
     }
@@ -291,10 +289,10 @@ public class FriendshipService implements Observable {
     private int pendingListPageNumber = 0;
     private int pendingListPageSize = 5;
 
-    public List<Tuple<Utilizator, Date>> getPendingListNextFriends(Long id, int status)
+    public List<Tuple<User, Date>> getPendingListNextFriends(Long id, int status)
     {
         this.pendingListPageNumber++;
-        List<Tuple<Utilizator, Date>> rez = getFriendsOnPendingListPageWithIdAndStatus(this.pendingListPageNumber, id, status);
+        List<Tuple<User, Date>> rez = getFriendsOnPendingListPageWithIdAndStatus(this.pendingListPageNumber, id, status);
         if(rez.size() > 0)
         {
             return rez;
@@ -303,10 +301,10 @@ public class FriendshipService implements Observable {
         return null;
     }
 
-    public List<Tuple<Utilizator, Date>> getPendingListPreviousFriends(Long id, int status)
+    public List<Tuple<User, Date>> getPendingListPreviousFriends(Long id, int status)
     {
         this.pendingListPageNumber--;
-        List<Tuple<Utilizator, Date>> rez = getFriendsOnPendingListPageWithIdAndStatus(this.pendingListPageNumber, id, status);
+        List<Tuple<User, Date>> rez = getFriendsOnPendingListPageWithIdAndStatus(this.pendingListPageNumber, id, status);
         if(rez.size() > 0)
         {
             return rez;
@@ -315,13 +313,13 @@ public class FriendshipService implements Observable {
         return null;
     }
 
-    public List<Tuple<Utilizator, Date>> getFriendsOnPendingListPageWithIdAndStatus(int page, Long id, int status) {
+    public List<Tuple<User, Date>> getFriendsOnPendingListPageWithIdAndStatus(int page, Long id, int status) {
         if(page != -1) this.pendingListPageNumber = page;
         Pageable pageable = new PageableImplementation(this.pendingListPageNumber, this.pendingListPageSize);
-        Prietenie p = new Prietenie();
+        Friendship p = new Friendship();
         p.setId(new Tuple<>(id, null));
         p.setStatus(status);
-        Page<Prietenie> friendsPage = friendRepo.findAllLike(pageable, p);
+        Page<Friendship> friendsPage = friendRepo.findAllLike(pageable, p);
         if(friendsPage == null) return null;
         return translateFriendsToUsersWithDate(friendsPage.getContent().toList(), id);
     }

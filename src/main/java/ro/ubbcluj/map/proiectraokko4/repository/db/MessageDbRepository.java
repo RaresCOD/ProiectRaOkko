@@ -1,20 +1,14 @@
 package ro.ubbcluj.map.proiectraokko4.repository.db;
 
 
-import ro.ubbcluj.map.proiectraokko4.Message.Message;
-import ro.ubbcluj.map.proiectraokko4.domain.Utilizator;
+import ro.ubbcluj.map.proiectraokko4.domain.Message;
+import ro.ubbcluj.map.proiectraokko4.domain.User;
 import ro.ubbcluj.map.proiectraokko4.domain.validators.Validator;
 import ro.ubbcluj.map.proiectraokko4.repository.Repository;
-import ro.ubbcluj.map.proiectraokko4.repository.paging.Page;
-import ro.ubbcluj.map.proiectraokko4.repository.paging.PageImplementation;
-import ro.ubbcluj.map.proiectraokko4.repository.paging.Pageable;
-import ro.ubbcluj.map.proiectraokko4.repository.paging.PagingRepository;
 
 import java.sql.*;
 import java.time.LocalDateTime;
-import java.sql.Date;
 import java.util.*;
-import java.util.stream.StreamSupport;
 
 public class MessageDbRepository implements Repository<Long, Message> {
     private String url;
@@ -51,7 +45,7 @@ public class MessageDbRepository implements Repository<Long, Message> {
 
                 PreparedStatement ps1 = connection.prepareStatement(sql1);
                 ResultSet resultSet1 = ps1.executeQuery();
-                Utilizator utilizator = new Utilizator("a","a","a", "a");
+                User utilizator = new User("a","a","a", "a");
                 while (resultSet1.next()) {
                     String firstName = resultSet1.getString("first_name");
                     String lastName = resultSet1.getString("last_name");
@@ -65,7 +59,7 @@ public class MessageDbRepository implements Repository<Long, Message> {
                 String toString = resultSet.getString("to1");
                 String toString1 = toString.strip();
                 String[] listTo = toString1.split(" ");
-                List<Utilizator> list = new ArrayList<>();
+                List<User> list = new ArrayList<>();
                 for(String curent: listTo) {
                     String sql2 = "select * from users where id = " + curent;
 
@@ -76,7 +70,7 @@ public class MessageDbRepository implements Repository<Long, Message> {
                         String lastName1 = resultSet2.getString("last_name");
                         String username1 = resultSet2.getString("username");
                         String password1 = resultSet2.getString("password");
-                        Utilizator utilizator1 = new Utilizator(username1, firstName1, lastName1, password1);
+                        User utilizator1 = new User(username1, firstName1, lastName1, password1);
                         utilizator1.setId(Long.valueOf(curent));
                         list.add(utilizator1);
                     }
@@ -111,7 +105,7 @@ public class MessageDbRepository implements Repository<Long, Message> {
 
                 PreparedStatement ps1 = connection.prepareStatement(sql1);
                 ResultSet resultSet1 = ps1.executeQuery();
-                Utilizator utilizator = new Utilizator("a","a","a", "a");
+                User utilizator = new User("a","a","a", "a");
                 while (resultSet1.next()) {
                     String firstName = resultSet1.getString("first_name");
                     String lastName = resultSet1.getString("last_name");
@@ -125,7 +119,7 @@ public class MessageDbRepository implements Repository<Long, Message> {
                 String toString = resultSet.getString("to1");
                 String toString1 = toString.strip();
                 String[] listTo = toString1.split(" ");
-                List<Utilizator> list = new ArrayList<>();
+                List<User> list = new ArrayList<>();
                 for(String curent: listTo) {
                     String sql2 = "select * from users where id = " + curent;
 
@@ -136,7 +130,7 @@ public class MessageDbRepository implements Repository<Long, Message> {
                         String lastName1 = resultSet2.getString("last_name");
                         String username1 = resultSet2.getString("username");
                         String password1 = resultSet2.getString("password");
-                        Utilizator utilizator1 = new Utilizator(username1, firstName1, lastName1, password1);
+                        User utilizator1 = new User(username1, firstName1, lastName1, password1);
                         utilizator1.setId(Long.valueOf(curent));
                         list.add(utilizator1);
                     }

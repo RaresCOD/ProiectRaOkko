@@ -8,7 +8,7 @@ public class ProfilePage {
     private String username;
     private String firstName;
     private String lastName;
-    private  List<Tuple<Utilizator, Date>> friendsList = new ArrayList<Tuple<Utilizator, Date>>();
+    private  List<Tuple<User, Date>> friendsList = new ArrayList<Tuple<User, Date>>();
     private int friendshipStatus;
 
 
@@ -18,7 +18,7 @@ public class ProfilePage {
      * @param firstName fn
      * @param lastName ln
      */
-    public ProfilePage(String username, String firstName, String lastName, List<Tuple<Utilizator, Date>> friendsList, int friendshipStatus) {
+    public ProfilePage(String username, String firstName, String lastName, List<Tuple<User, Date>> friendsList, int friendshipStatus) {
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -54,7 +54,7 @@ public class ProfilePage {
      * getter
      * @return all friends with the date of accept
      */
-    public List<Tuple<Utilizator, Date>> getFriends() {
+    public List<Tuple<User, Date>> getFriends() {
         return friendsList;
     }
 

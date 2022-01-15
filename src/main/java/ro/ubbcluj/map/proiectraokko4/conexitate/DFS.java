@@ -1,7 +1,7 @@
-package ro.ubbcluj.map.proiectraokko4.Conexitate;
+package ro.ubbcluj.map.proiectraokko4.conexitate;
 
-import ro.ubbcluj.map.proiectraokko4.domain.Prietenie;
-import ro.ubbcluj.map.proiectraokko4.domain.Utilizator;
+import ro.ubbcluj.map.proiectraokko4.domain.Friendship;
+import ro.ubbcluj.map.proiectraokko4.domain.User;
 
 import java.util.LinkedList;
 
@@ -12,13 +12,13 @@ public class DFS {
     private int size, nrComp, nrNod;
     private int[][] matrix;
     private int[] viz, ant;
-    private Iterable<Prietenie> prietenii;
-    private Iterable<Utilizator> users;
+    private Iterable<Friendship> prietenii;
+    private Iterable<User> users;
     private int maxi;
 
 
     private boolean isUser(int x) {
-        for(Utilizator util:users) {
+        for(User util:users) {
             if (util.getId().equals(Long.valueOf(x))) {
                 return true;
             }
@@ -32,7 +32,7 @@ public class DFS {
      * @param prietenii - friendships
      * @param users - users
      */
-    public DFS(int nrNod, Iterable<Prietenie> prietenii, Iterable<Utilizator> users) {
+    public DFS(int nrNod, Iterable<Friendship> prietenii, Iterable<User> users) {
 
         this.users = users;
         this.size = nrNod;
@@ -54,7 +54,7 @@ public class DFS {
             }
         }
 
-        for (Prietenie curent : prietenii) {
+        for (Friendship curent : prietenii) {
             matrix[Math.toIntExact(curent.getId().getLeft())-1][Math.toIntExact(curent.getId().getRight())-1] = 1;
             matrix[Math.toIntExact(curent.getId().getRight())-1][Math.toIntExact(curent.getId().getLeft())-1] = 1;
         }
